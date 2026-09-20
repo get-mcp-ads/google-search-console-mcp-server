@@ -1,49 +1,60 @@
-# google-search-console-mcp-server
+<div align="center">
 
+# Google Search Console MCP server
 
+### Bring your search performance into the conversation.
 
+Investigate queries, pages, indexing and sitemaps through a read-only MCP server.
+
+[![Release](https://img.shields.io/github/v/release/getmcpads-com/google-search-console-mcp-server?color=2448e5)](https://github.com/getmcpads-com/google-search-console-mcp-server/releases/latest)
 [![CI](https://github.com/getmcpads-com/google-search-console-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/getmcpads-com/google-search-console-mcp-server/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A522.12-brightgreen.svg)](package.json)
 
-An open-source [Model Context Protocol](https://modelcontextprotocol.io) server for
-**Google Search Console**. It lets Claude, ChatGPT, Cursor or any MCP client query your
-search performance, inspect indexing, and analyse sitemaps.
+[Watch the demo](https://www.getmcpads.com/home/film/get-mcp-ads-film-1080p.mp4) · [What's new](#whats-new) · [Install](#install-this-release) · [Tool reference](#tools) · [Try hosted getmcpads](https://www.getmcpads.com/tools/search-console?utm_source=github&utm_medium=readme&utm_campaign=google-search-console)
 
-**Read-only, with no way to turn that off.** You run it, and your credentials stay on your
-machine.
+[![Watch the getmcpads product demo: campaign review in Claude](https://www.getmcpads.com/home/film/poster-rich.webp)](https://www.getmcpads.com/home/film/get-mcp-ads-film-1080p.mp4)
+
+**[Play the 27-second product film](https://www.getmcpads.com/home/film/get-mcp-ads-film-1080p.mp4)**
+
+</div>
+
+The film demonstrates hosted getmcpads with staged data. Its creative galleries and MCP Apps interface belong to the hosted product. This repository provides the standalone native API tools.
+
+**20 read tools** · Read-only by design.
+
+Run locally with your own platform credentials and a client that supports stdio MCP, such as Claude Desktop, Claude Code or Cursor. Your requests go directly to the platform. For managed connections, including supported ChatGPT setups, use the hosted option.
+
+## What's new
+
+**[v2.0.0: Native tools and security update](https://github.com/getmcpads-com/google-search-console-mcp-server/releases/tag/v2.0.0) · September 20, 2026**
+
+- Bound automatic pagination to four pages, 100,000 rows and a 30-second total deadline.
+- Expose pagination and truncation diagnostics while preserving hourly data and native metadata.
+- Remove provider error bodies from logs and errors; bound search-type comparison fan-out.
+- Require Node.js 22.12 or newer and check Node 22/24 in CI.
+- Update vulnerable dependencies and regenerate the MCP catalog.
+
+[Full changelog](CHANGELOG.md) · [Source synchronization details](SOURCE_SYNC.md) · [All releases](https://github.com/getmcpads-com/google-search-console-mcp-server/releases)
+
+### Upgrade notes
+
+Requires **Node.js 22.12 or newer**. CI covers Node 22 and 24. Version 2.0.0 drops Node 18 and 20 support. Hosted creative integrations and MCP Apps UI are outside this release.
+
+## Install this release
+
+This is a GitHub source release. npm and MCP Registry versions are published separately. The commands below select this exact version; unpinned `npx` examples later in this document select the version currently available on npm.
 
 ```bash
-npx -y @getmcpads/google-search-console-mcp-server
-```
-
-Also listed in the [MCP Registry](https://registry.modelcontextprotocol.io) as **`com.getmcpads/google-search-console`**, so clients that read the registry can install it by name.
-
-> **Prefer a hosted connection?** [Get MCP Ads for Search Console](https://www.getmcpads.com/tools/search-console?utm_source=github&utm_medium=readme&utm_campaign=search_console_hosted)
-> handles the server and OAuth flow. Create a workspace, connect the platform and
-> select the accounts or properties your assistant may read. Free is read only;
-> paid limits and supported writes are described on the site. Hosted and npm
-> releases can differ: check the current catalogue for the operation you need.
-
----
-
-
-## Current source release
-
-Version 2.0.0 requires **Node.js 22.12 or newer**. CI checks Node 22 and 24.
-This source catalog contains **20 read tools**.
-Native API tools are included. Hosted creative galleries, visual editors, Launcher storage and MCP Apps UI are excluded.
-This is a major source update because Node 18 and 20 are no longer supported.
-Source commits, npm releases and MCP Registry publication are separate steps. Until this version is published, use the source installation below to run this exact revision.
-
-```bash
-git clone https://github.com/getmcpads-com/google-search-console-mcp-server.git
+git clone --branch v2.0.0 --depth 1 https://github.com/getmcpads-com/google-search-console-mcp-server.git
 cd google-search-console-mcp-server
 npm ci
 npm run build
 ```
 
-Configure your MCP client to run `node` with the absolute path to `dist/cli.js` and the environment variables documented below.
+Configure your MCP client to run `node` with the absolute path to `dist/cli.js` and the platform credentials documented below.
+
+> **Prefer a managed connection?** [Use Google Search Console with hosted getmcpads](https://www.getmcpads.com/tools/search-console?utm_source=github&utm_medium=readme&utm_campaign=google-search-console). Connect your account, select the data your assistant may access and use the hosted MCP connection. See the site for current features and plans.
 
 ## What you get
 
@@ -224,46 +235,33 @@ npm run doctor
 
 ## Tools
 
+Every tool is listed below. See [server-card.json](server-card.json) for complete parameter and output schemas.
+
 <details>
 <summary><b>20 read tools</b></summary>
 
-### Discovery and health
 | Tool | Purpose |
-|---|---|
-| `gsc_health_check` | Validates credentials and reachable properties |
-| `gsc_list_sites` / `gsc_get_site` | Properties you can reach, and their permission level |
-| `gsc_get_data_freshness` | How settled the most recent data is |
-
-### Search Analytics
-| Tool | Purpose |
-|---|---|
-| `gsc_query_search_analytics` | The main reporting tool. Dimensions, filters, date ranges |
-| `gsc_validate_query` | Check a combination *before* running it |
-| `gsc_compare_search_types` | Web, image, video, news and discover side by side |
-| `gsc_analyze_search_appearance_trends` | How rich results evolve over time |
-
-### SEO analysis
-| Tool | Purpose |
-|---|---|
-| `gsc_detect_cannibalization` | Pages competing for the same query |
-| `gsc_find_losses_gains` | Queries and pages won or lost between two periods |
-| `gsc_cluster_queries` | Group queries by shared intent |
-
-### Indexing
-| Tool | Purpose |
-|---|---|
-| `gsc_inspect_url` | Crawl and index status for one URL |
-| `gsc_bulk_inspect_urls` | Up to 10 URLs per call, to protect your quota |
-| `gsc_indexation_watchlist` | Track URLs whose verdict changed |
-| `gsc_monitor_indexation_freshness` | Freshness and indexation drift together |
-| `gsc_plan_large_site_sampling` | Build an inspection sample when you cannot inspect everything |
-
-### Sitemaps
-| Tool | Purpose |
-|---|---|
-| `gsc_list_sitemaps` / `gsc_get_sitemap` | Submitted sitemaps and their status |
-| `gsc_get_sitemap_health` | Errors, warnings and pending states |
-| `gsc_track_sitemap_deltas` | What changed against a baseline you supply |
+| --- | --- |
+| `gsc_list_sites` | List all Google Search Console properties accessible with the current credentials. |
+| `gsc_get_site` | Get one Search Console property and its exact permission level (read-only sites.get). |
+| `gsc_health_check` | Verify Google Search Console read-only authentication, visible properties, configured default site, and permission levels without exposing tokens. |
+| `gsc_query_search_analytics` | Query Google Search Console Search Analytics. |
+| `gsc_inspect_url` | Inspect a URL for Google indexing status, crawl info, mobile usability, AMP, and rich results. |
+| `gsc_bulk_inspect_urls` | Inspect multiple URLs with a conservative sequential limit and normalized URL Inspection results. |
+| `gsc_list_sitemaps` | List sitemaps submitted for a Search Console property, including processing status and submitted/indexed counts. |
+| `gsc_get_sitemap` | Get one submitted sitemap by full feed path, including type, fetch state, warnings/errors, and submitted/indexed content totals. |
+| `gsc_get_sitemap_health` | Return an enriched read-only sitemap health summary with status totals, submitted/indexed content counts, warnings, and errors. |
+| `gsc_compare_search_types` | Compare performance across Search Console search types: web, image, video, news, discover, and Google News. |
+| `gsc_get_data_freshness` | Detect the most recent date with Search Analytics data by querying recent daily rows. |
+| `gsc_monitor_indexation_freshness` | Read-only monitoring snapshot for Search Analytics freshness, sitemap indexation totals, and an optional small URL Inspection sample. |
+| `gsc_track_sitemap_deltas` | Read-only sitemap delta tracker. |
+| `gsc_analyze_search_appearance_trends` | Analyze structured data and rich-result trend signals via the Search Analytics searchAppearance dimension when GSC exposes it. |
+| `gsc_plan_large_site_sampling` | Build a read-only URL Inspection sampling plan for large sites from sitemap risk signals and Search Analytics page performance. |
+| `gsc_indexation_watchlist` | Read-only URL Inspection watchlist for critical URLs. |
+| `gsc_find_losses_gains` | Compare two periods for query or page performance and return click/impression/CTR/position deltas. |
+| `gsc_cluster_queries` | Cluster Search Console queries by simple tokens and intent signals: brand/non-brand, question, category, and topic tokens. |
+| `gsc_detect_cannibalization` | Detect queries where multiple pages compete for clicks/impressions in Search Analytics query-page rows. |
+| `gsc_validate_query` | Validate a Search Console metric/dimension/search type combination before executing it. |
 
 </details>
 
@@ -303,7 +301,7 @@ Full policy: [SECURITY.md](SECURITY.md).
 ## Looking for a managed, multi-platform version?
 
 [Try hosted Search Console](https://www.getmcpads.com/tools/search-console?utm_source=github&utm_medium=readme&utm_campaign=search_console_hosted) if you want to use this source without operating a local server.
-Get MCP Ads also connects advertising, Search Console and GA4 through one MCP URL.
+getmcpads also connects advertising, Search Console and GA4 through one MCP URL.
 Source availability and plan limits are listed on the site; connecting an account is still required.
 
 1. Follow the [Search Console connection guide](https://www.getmcpads.com/guides/sources/search-console).
@@ -332,12 +330,14 @@ Google and Google Search Console are trademarks of Google LLC.
 **This project is not affiliated with, endorsed by, or sponsored by Google LLC.**
 It is an independent client of a public API.
 
-## Version 1.1: platform updates and MCP contracts
+## MCP contracts and desktop bundle
 
-Every tool now declares read/write annotations, parameter descriptions and a structured output schema. Successful calls retain their original text and expose the same payload as `structuredContent.result`; provider fields depend on the selected report. Errors retain `isError: true`. The generated [server card](server-card.json) contains definitions only, with no account credentials.
+Every tool declares read/write annotations, parameter descriptions and a structured output schema. Successful calls expose the payload as `structuredContent.result`; errors retain `isError: true`. The generated [server card](server-card.json) contains definitions only.
 
-The hosted GetMCPAds service additionally provides OAuth account selection and interactive review workspaces. Local servers use your own platform credentials and return native report data and media references.
+Run `npm run bundle -- /path/to/output` to build a `.mcpb` desktop bundle from the current catalog. Credentials are entered locally during installation. This server remains read-only.
 
-### Desktop bundle
+## More from getmcpads
 
-Run `npm run bundle -- /path/to/output` to build a `.mcpb` desktop bundle from the current catalogue. The bundle contains production dependencies, documented local configuration, and complete tool definitions. Provider credentials are entered locally during installation; write tools remain disabled unless explicitly enabled.
+[Meta Ads](https://github.com/getmcpads-com/meta-ads-mcp-server) · [Google Ads](https://github.com/getmcpads-com/google-ads-mcp-server) · [Google Analytics 4](https://github.com/getmcpads-com/google-analytics-mcp-server) · [TikTok Ads](https://github.com/getmcpads-com/tiktok-ads-mcp-server) · [Pinterest Ads](https://github.com/getmcpads-com/pinterest-ads-mcp-server) · [X Ads](https://github.com/getmcpads-com/x-ads-mcp-server)
+
+Maintained by **Emmanuel** at [getmcpads](https://www.getmcpads.com). Questions: [hello@getmcpads.com](mailto:hello@getmcpads.com).
