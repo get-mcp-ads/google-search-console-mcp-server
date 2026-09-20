@@ -1,11 +1,11 @@
 {
   "manifest_version": "0.3",
   "name": "google-search-console-mcp-server",
-  "display_name": "Google Search Console by Get MCP Ads",
-  "version": "1.1.0",
+  "display_name": "Google Search Console by getmcpads",
+  "version": "2.0.0",
   "description": "Google Search Console MCP server: 20 read tools.",
   "author": {
-    "name": "GetMCPAds",
+    "name": "getmcpads",
     "url": "https://www.getmcpads.com"
   },
   "homepage": "https://www.getmcpads.com/tools/search-console",
@@ -84,7 +84,7 @@
       "linux"
     ],
     "runtimes": {
-      "node": ">=18"
+      "node": ">=22.12"
     }
   }
 }

@@ -41,6 +41,37 @@ type GoogleApiErrorBody = {
   };
 };
 
+function gscRouteClass(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.pathname.endsWith("/searchAnalytics/query")) return "search_analytics";
+    if (parsed.pathname.endsWith("/urlInspection/index:inspect")) return "url_inspection";
+    if (parsed.pathname.includes("/sitemaps")) return "sitemaps";
+    if (parsed.pathname.includes("/sites")) return "sites";
+  } catch {
+    // The caller uses code-owned API URLs; keep even malformed-url diagnostics generic.
+  }
+  return "gsc_api";
+}
+
+function codeOwnedApiFailure(status: number): { message: string; status: string } {
+  if (status === 401 || status === 403) {
+    return { message: "GSC API authorization failed.", status: "AUTHORIZATION_FAILED" };
+  }
+  if (status === 429) {
+    return { message: "GSC API rate limit was reached.", status: "RATE_LIMITED" };
+  }
+  if (status >= 500) {
+    return { message: "GSC API is temporarily unavailable.", status: "UPSTREAM_UNAVAILABLE" };
+  }
+  return { message: "GSC API rejected the request.", status: "REQUEST_REJECTED" };
+}
+
+export const GSC_AUTO_PAGINATION_MAX_PAGES = 4;
+export const GSC_AUTO_PAGINATION_MAX_ROWS = 100_000;
+export const GSC_AUTO_PAGINATION_DEADLINE_MS = 30_000;
+const GSC_SINGLE_REQUEST_TIMEOUT_MS = 90_000;
+
 // ============================================
 // STATIC METHODS (OAuth Flow)
 // ============================================
@@ -157,17 +188,21 @@ export class GSCClient {
   // PRIVATE METHODS
   // ============================================
 
-  private async request<T>(url: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    url: string,
+    options: RequestInit = {},
+    timeoutMs: number = GSC_SINGLE_REQUEST_TIMEOUT_MS,
+  ): Promise<T> {
+    if (!Number.isFinite(timeoutMs) || timeoutMs < 1) {
+      throw new GSCApiException("GSC request deadline expired before dispatch", 408, "TIMEOUT");
+    }
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90_000);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
-        // Forced after the spread: once a bearer token is attached, a redirect
-        // must never be followed, or the credential would be forwarded to
-        // whatever host the redirect names.
         redirect: "error",
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
@@ -177,26 +212,24 @@ export class GSCClient {
       });
 
       if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({})) as GoogleApiErrorBody;
-        const errorDetails = errorBody?.error;
-
-        console.error("[GSCClient] API Error:", response.status, JSON.stringify(errorBody, null, 2));
-
-        const detailedMessage = errorDetails?.message
-          || `Request failed: ${response.statusText}`;
+        const failure = codeOwnedApiFailure(response.status);
+        console.error("[GSCClient] API error", {
+          status: response.status,
+          route: gscRouteClass(url),
+        });
 
         throw new GSCApiException(
-          detailedMessage,
+          failure.message,
           response.status,
-          errorDetails?.status
+          failure.status,
         );
       }
 
-      return response.json() as Promise<T>;
+      return await response.json() as T;
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         throw new GSCApiException(
-          "GSC API request timed out after 90 seconds",
+          "GSC API request exceeded its bounded deadline",
           408,
           "TIMEOUT"
         );
@@ -256,7 +289,19 @@ export class GSCClient {
 
     const MAX_ROWS_PER_REQUEST = 25000;
     const rowLimit = request.rowLimit ?? MAX_ROWS_PER_REQUEST;
-    const initialOffset = request.startRow ?? 0;
+    const autoPaginate = request.rowLimit === undefined;
+    const paginationDeadline = Date.now() + GSC_AUTO_PAGINATION_DEADLINE_MS;
+    const remainingPaginationMs = (): number => {
+      const remaining = paginationDeadline - Date.now();
+      if (remaining < 1) {
+        throw new GSCApiException(
+          "GSC auto-pagination exceeded its 30-second total deadline",
+          408,
+          "PAGINATION_DEADLINE",
+        );
+      }
+      return remaining;
+    };
 
     // First request
     const firstResponse = await this.request<GSCSearchAnalyticsResponse>(url, {
@@ -264,43 +309,78 @@ export class GSCClient {
       body: JSON.stringify({
         ...request,
         rowLimit: Math.min(rowLimit, MAX_ROWS_PER_REQUEST),
-        startRow: initialOffset,
+        startRow: request.startRow ?? 0,
       }),
-    });
+    }, autoPaginate ? remainingPaginationMs() : GSC_SINGLE_REQUEST_TIMEOUT_MS);
+    if (autoPaginate) remainingPaginationMs();
 
     const returnedRows = firstResponse.rows?.length ?? 0;
 
     // If user specified a limit or all rows returned, no auto-pagination
     if (request.rowLimit || returnedRows < MAX_ROWS_PER_REQUEST) {
-      return firstResponse;
+      return {
+        ...firstResponse,
+        pagination: {
+          mode: autoPaginate ? "bounded_auto" : "single_page",
+          pageCount: 1,
+          rowCount: returnedRows,
+          maximumPages: autoPaginate ? GSC_AUTO_PAGINATION_MAX_PAGES : 1,
+          maximumRows: autoPaginate ? GSC_AUTO_PAGINATION_MAX_ROWS : rowLimit,
+          deadlineMs: autoPaginate ? GSC_AUTO_PAGINATION_DEADLINE_MS : GSC_SINGLE_REQUEST_TIMEOUT_MS,
+          truncated: false,
+        },
+      };
     }
 
     // Auto-paginate to collect all rows
     const allRows = [...(firstResponse.rows ?? [])];
-    let currentOffset = initialOffset + returnedRows;
+    let currentOffset = (request.startRow ?? 0) + returnedRows;
+    let pageCount = 1;
+    let lastPageWasFull = returnedRows === MAX_ROWS_PER_REQUEST;
 
-    while (true) {
+    while (
+      pageCount < GSC_AUTO_PAGINATION_MAX_PAGES
+      && allRows.length < GSC_AUTO_PAGINATION_MAX_ROWS
+    ) {
+      const remainingRows = GSC_AUTO_PAGINATION_MAX_ROWS - allRows.length;
+      const requestedRows = Math.min(MAX_ROWS_PER_REQUEST, remainingRows);
       const pageResponse = await this.request<GSCSearchAnalyticsResponse>(url, {
         method: "POST",
         body: JSON.stringify({
           ...request,
-          rowLimit: MAX_ROWS_PER_REQUEST,
+          rowLimit: requestedRows,
           startRow: currentOffset,
         }),
-      });
+      }, remainingPaginationMs());
+      remainingPaginationMs();
 
       const pageRows = pageResponse.rows?.length ?? 0;
+      pageCount += 1;
+      lastPageWasFull = pageRows === requestedRows;
       if (pageRows === 0) break;
 
-      allRows.push(...(pageResponse.rows ?? []));
+      allRows.push(...(pageResponse.rows ?? []).slice(0, remainingRows));
       currentOffset += pageRows;
 
-      if (pageRows < MAX_ROWS_PER_REQUEST) break; // Last page
+      if (pageRows < requestedRows) break; // Last page
     }
 
+    remainingPaginationMs();
     return {
       ...firstResponse,
-      rows: allRows,
+      rows: allRows.slice(0, GSC_AUTO_PAGINATION_MAX_ROWS),
+      pagination: {
+        mode: "bounded_auto",
+        pageCount,
+        rowCount: Math.min(allRows.length, GSC_AUTO_PAGINATION_MAX_ROWS),
+        maximumPages: GSC_AUTO_PAGINATION_MAX_PAGES,
+        maximumRows: GSC_AUTO_PAGINATION_MAX_ROWS,
+        deadlineMs: GSC_AUTO_PAGINATION_DEADLINE_MS,
+        truncated: lastPageWasFull && (
+          pageCount >= GSC_AUTO_PAGINATION_MAX_PAGES
+          || allRows.length >= GSC_AUTO_PAGINATION_MAX_ROWS
+        ),
+      },
     };
   }
 

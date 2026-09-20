@@ -1,6 +1,6 @@
 {
   "name": "@getmcpads/google-search-console-mcp-server",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "mcpName": "com.getmcpads/google-search-console",
   "description": "Google Search Console MCP server: 20 read tools.",
   "license": "Apache-2.0",
@@ -43,7 +43,7 @@
     "typescript-eslint": "^8.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.12.0"
   },
   "files": [
     "dist/",
@@ -77,7 +77,7 @@
   "bugs": {
     "url": "https://github.com/getmcpads-com/google-search-console-mcp-server/issues"
   },
-  "author": "GetMCPAds (https://www.getmcpads.com)",
+  "author": "Emmanuel, getmcpads (https://www.getmcpads.com)",
   "publishConfig": {
     "access": "public"
   }

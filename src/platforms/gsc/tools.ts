@@ -57,6 +57,7 @@ const datePresetSchema = z.enum(["today", "yesterday", "last7days", "last28days"
 const searchTypeSchema = z.enum(["web", "image", "video", "news", "discover", "googleNews"]);
 const dataStateSchema = z.enum(["final", "all", "hourly_all"]);
 const aggregationTypeSchema = z.enum(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
+export const CompareSearchTypesSchema = z.array(searchTypeSchema).min(1).max(6).refine(items => new Set(items).size === items.length, "searchTypes must be unique");
 const limitSchema = z.number().int().min(1).max(25000).optional().default(1000);
 const dateRangeSchema = z.object({
   startDate: z.string().describe("Start date YYYY-MM-DD"),
@@ -859,6 +860,11 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
               mode: autoPaginate ? "auto_startRow" : "single_page",
               autoPaginate,
               startRow: startRow ?? 0,
+              pageCount: response.pagination?.pageCount ?? 1,
+              maximumPages: response.pagination?.maximumPages ?? 1,
+              maximumRows: response.pagination?.maximumRows ?? limit,
+              deadlineMs: response.pagination?.deadlineMs ?? 90_000,
+              truncated: response.pagination?.truncated ?? false,
               limit: autoPaginate ? null : limit,
             },
             dataState,
@@ -1053,7 +1059,7 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Compare performance across Search Console search types: web, image, video, news, discover, and Google News.",
     {
       siteUrl: siteUrlSchema,
-      searchTypes: z.array(searchTypeSchema).optional().default(["web", "image", "video", "discover"]),
+      searchTypes: CompareSearchTypesSchema.optional().default(["web", "image", "video", "discover"]),
       datePreset: datePresetSchema.optional().default("last28days"),
       dateRange: z.object({ startDate: z.string(), endDate: z.string() }).optional(),
     },

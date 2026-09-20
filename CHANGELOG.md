@@ -1,4 +1,13 @@
 # Changelog
+## 2.0.0 - 2026-09-20
+
+- Bound automatic pagination to four pages, 100,000 rows and a 30-second total deadline.
+- Expose pagination and truncation diagnostics while preserving hourly data and native metadata.
+- Remove provider error bodies from logs and errors; bound search-type comparison fan-out.
+- Require Node.js 22.12 or newer and check Node 22/24 in CI.
+- Update vulnerable dependencies and regenerate the MCP catalog.
+- No hosted creative UI or MCP Apps integrations.
+
 
 ## 1.1.0
 

@@ -137,6 +137,15 @@ export interface GSCSearchAnalyticsRow {
 }
 
 export interface GSCSearchAnalyticsResponse {
+  pagination?: {
+    mode: "single_page" | "bounded_auto";
+    pageCount: number;
+    rowCount: number;
+    maximumPages: number;
+    maximumRows: number;
+    deadlineMs: number;
+    truncated: boolean;
+  };
   rows?: GSCSearchAnalyticsRow[];
   responseAggregationType?: string;
   metadata?: {

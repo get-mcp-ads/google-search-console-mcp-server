@@ -1,8 +1,10 @@
 # google-search-console-mcp-server
 
+
+
 [![CI](https://github.com/getmcpads-com/google-search-console-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/getmcpads-com/google-search-console-mcp-server/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%E2%89%A518-brightgreen.svg)](package.json)
+[![Node](https://img.shields.io/badge/node-%E2%89%A522.12-brightgreen.svg)](package.json)
 
 An open-source [Model Context Protocol](https://modelcontextprotocol.io) server for
 **Google Search Console**. It lets Claude, ChatGPT, Cursor or any MCP client query your
@@ -24,6 +26,24 @@ Also listed in the [MCP Registry](https://registry.modelcontextprotocol.io) as *
 > releases can differ: check the current catalogue for the operation you need.
 
 ---
+
+
+## Current source release
+
+Version 2.0.0 requires **Node.js 22.12 or newer**. CI checks Node 22 and 24.
+This source catalog contains **20 read tools**.
+Native API tools are included. Hosted creative galleries, visual editors, Launcher storage and MCP Apps UI are excluded.
+This is a major source update because Node 18 and 20 are no longer supported.
+Source commits, npm releases and MCP Registry publication are separate steps. Until this version is published, use the source installation below to run this exact revision.
+
+```bash
+git clone https://github.com/getmcpads-com/google-search-console-mcp-server.git
+cd google-search-console-mcp-server
+npm ci
+npm run build
+```
+
+Configure your MCP client to run `node` with the absolute path to `dist/cli.js` and the environment variables documented below.
 
 ## What you get
 
@@ -315,7 +335,6 @@ It is an independent client of a public API.
 ## Version 1.1: platform updates and MCP contracts
 
 Every tool now declares read/write annotations, parameter descriptions and a structured output schema. Successful calls retain their original text and expose the same payload as `structuredContent.result`; provider fields depend on the selected report. Errors retain `isError: true`. The generated [server card](server-card.json) contains definitions only, with no account credentials.
-
 
 The hosted GetMCPAds service additionally provides OAuth account selection and interactive review workspaces. Local servers use your own platform credentials and return native report data and media references.
 

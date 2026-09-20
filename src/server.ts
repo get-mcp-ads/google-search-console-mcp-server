@@ -9,7 +9,7 @@ import type { GSCConfig } from "./config.js";
 import { registerGSC } from "./platforms/gsc/index.js";
 import { logger } from "./core/logger.js";
 
-export const PACKAGE_VERSION = "1.1.0";
+export const PACKAGE_VERSION = "2.0.0";
 
 export function createServer(config: GSCConfig): McpServer {
   const server = new McpServer(
