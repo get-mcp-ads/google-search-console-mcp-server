@@ -6,7 +6,7 @@ Thanks for considering a contribution. This project is maintained by
 ## Getting set up
 
 ```bash
-git clone https://github.com/getmcpads-com/google-search-console-mcp-server.git
+git clone https://github.com/get-mcp-ads/google-search-console-mcp-server.git
 cd google-search-console-mcp-server
 npm install
 cp .env.example .env

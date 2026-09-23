@@ -9,11 +9,11 @@
     "url": "https://www.getmcpads.com"
   },
   "homepage": "https://www.getmcpads.com/tools/search-console",
-  "documentation": "https://github.com/getmcpads-com/google-search-console-mcp-server#readme",
-  "support": "https://github.com/getmcpads-com/google-search-console-mcp-server/issues",
+  "documentation": "https://github.com/get-mcp-ads/google-search-console-mcp-server#readme",
+  "support": "https://github.com/get-mcp-ads/google-search-console-mcp-server/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/getmcpads-com/google-search-console-mcp-server"
+    "url": "https://github.com/get-mcp-ads/google-search-console-mcp-server"
   },
   "icon": "icon.png",
   "license": "Apache-2.0",
