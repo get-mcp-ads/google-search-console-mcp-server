@@ -55,7 +55,7 @@ test("the only hosts this server can reach are Google's", () => {
   }
   assert.deepEqual(
     [...hosts].sort(),
-    ["accounts.google.com", "oauth2.googleapis.com", "searchconsole.googleapis.com", "www.googleapis.com"],
+    ["oauth2.googleapis.com", "searchconsole.googleapis.com", "www.googleapis.com"],
     "A new outbound host appeared. That is a deliberate decision, not an accident.",
   );
 });

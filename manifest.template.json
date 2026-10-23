@@ -2,8 +2,8 @@
   "manifest_version": "0.3",
   "name": "google-search-console-mcp-server",
   "display_name": "Google Search Console by getmcpads",
-  "version": "2.0.0",
-  "description": "Google Search Console MCP server: 20 read tools.",
+  "version": "2.1.0",
+  "description": "Google Search Console MCP server: 20 read tools, no write tools.",
   "author": {
     "name": "getmcpads",
     "url": "https://www.getmcpads.com"
@@ -30,7 +30,8 @@
         "GSC_CLIENT_SECRET": "${user_config.gsc_client_secret}",
         "GSC_REFRESH_TOKEN": "${user_config.gsc_refresh_token}",
         "GSC_ACCESS_TOKEN": "${user_config.gsc_access_token}",
-        "GSC_SITE_URL": "${user_config.gsc_site_url}"
+        "GSC_SITE_URL": "${user_config.gsc_site_url}",
+        "GSC_SITE_URLS": "${user_config.gsc_site_urls}"
       }
     }
   },
@@ -74,6 +75,14 @@
       "required": false,
       "sensitive": false,
       "default": ""
+    },
+    "gsc_site_urls": {
+      "type": "string",
+      "title": "GSC Site Urls",
+      "description": "Comma-separated Search Console properties every tool is limited to. Recommended; required in 3.0.0.",
+      "required": false,
+      "sensitive": false,
+      "default": ""
     }
   },
   "tools_generated": true,
@@ -84,7 +93,7 @@
       "linux"
     ],
     "runtimes": {
-      "node": ">=22.12"
+      "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
     }
   }
 }
