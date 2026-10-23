@@ -1,8 +1,8 @@
 {
   "serverInfo": {
     "name": "@getmcpads/google-search-console-mcp-server",
-    "title": "Google Search Console MCP server: 20 read tools.",
-    "version": "2.0.1",
+    "title": "Google Search Console MCP server: 20 read tools, no write tools.",
+    "version": "2.1.0",
     "websiteUrl": "https://www.getmcpads.com/tools/search-console",
     "icons": [
       {

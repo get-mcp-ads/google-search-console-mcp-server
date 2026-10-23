@@ -10,7 +10,7 @@ Investigate queries, pages, indexing and sitemaps through a read-only MCP server
 [![CI](https://github.com/get-mcp-ads/google-search-console-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/get-mcp-ads/google-search-console-mcp-server/actions/workflows/ci.yml)
 [![Smithery](https://smithery.ai/badge/getmcpads/getmcpads-google-search-console)](https://smithery.ai/servers/getmcpads/getmcpads-google-search-console)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%E2%89%A522.12-brightgreen.svg)](package.json)
+[![Node](https://img.shields.io/badge/node-22.23.4%20%7C%2024.22.1%20%7C%20%E2%89%A526.12.1-brightgreen.svg)](package.json)
 
 [Watch the film](https://www.getmcpads.com/home/film/get-mcp-ads-brand-film-1080p.mp4) · [What's new](#whats-new) · [Install](#install-this-release) · [Tool reference](#tools) · [Try hosted getmcpads](https://www.getmcpads.com/tools/search-console?utm_source=github&utm_medium=readme&utm_campaign=google-search-console)
 
@@ -28,26 +28,47 @@ Run locally with your own platform credentials and a client that supports stdio 
 
 ## What's new
 
-**[v2.0.1: Native tools and security update](https://github.com/get-mcp-ads/google-search-console-mcp-server/releases/tag/v2.0.1) · September 20, 2026**
+<!-- release-history:start -->
+**[v2.1.0: Site allowlist and revoked-token handling](https://github.com/get-mcp-ads/google-search-console-mcp-server/releases/tag/v2.1.0) · October 23, 2026**
 
-- Bound automatic pagination to four pages, 100,000 rows and a 30-second total deadline.
-- Expose pagination and truncation diagnostics while preserving hourly data and native metadata.
-- Remove provider error bodies from logs and errors; bound search-type comparison fan-out.
-- Require Node.js 22.12 or newer and check Node 22/24 in CI.
-- Update vulnerable dependencies and regenerate the MCP catalog.
+- Add the optional `GSC_SITE_URLS` allowlist, checked before every request, including URL Inspection where the property travels in the body. `gsc_list_sites` and `gsc_health_check` list only the allowed properties. Unset, the server prints a recommendation on stderr. It becomes required in 3.0.0.
+- Refuse a `GSC_SITE_URL` outside `GSC_SITE_URLS` at startup, when both are set.
+- Port the gateway's handling of a refused refresh token (`invalid_grant`, `admin_policy_enforced`): one re-authorization message naming `GSC_REFRESH_TOKEN`, and no further token requests until restart. A static `GSC_ACCESS_TOKEN` keeps working as before.
+- Remove the unused authorization-code helpers. The server never ran an OAuth browser flow, and `accounts.google.com` is no longer in the source.
+- Give the token request a deadline and bound every response body. Pagination limits are unchanged.
+- Require Node.js `^22.23.4 || ^24.22.1 || >=26.12.1`, warn on stderr at startup and in `npm run doctor` on older releases, and test Node 22, 24 and 26 in CI.
+- Update `@modelcontextprotocol/sdk` to 1.32.1 and regenerate the lockfile.
+- Publish from version tags with `release.yml`, which replaces `publish-mcp.yml`. Add Dependabot.
+- No tool is added or removed: 20 read tools, no write tools.
 
-[Full changelog](CHANGELOG.md) · [Source synchronization details](SOURCE_SYNC.md) · [All releases](https://github.com/get-mcp-ads/google-search-console-mcp-server/releases)
+**Earlier releases**
+
+| Version | Date | Highlights |
+| --- | --- | --- |
+| 2.0.1 | September 23, 2026 | Public repository restored |
+| 2.0.0 | September 20, 2026 | Gateway sync and security fixes |
+| 1.1.0 | September 13, 2026 | Platform capability sync and quality contracts |
+| 1.0.2 | August 30, 2026 | Announce the package version over MCP. |
+| 1.0.1 | August 30, 2026 | Add `server.json` and `mcpName` for the official MCP Registry, under `com.getmcpads/google-search-console`. |
+| 1.0.0 | August 29, 2026 | First open-source release |
+
+[Full changelog](CHANGELOG.md) · [All releases](https://github.com/get-mcp-ads/google-search-console-mcp-server/releases)
+<!-- release-history:end -->
+
+Source synchronization: [SOURCE_SYNC.md](SOURCE_SYNC.md).
 
 ### Upgrade notes
 
-Requires **Node.js 22.12 or newer**. CI covers Node 22 and 24. Version 2.0.1 drops Node 18 and 20 support. Hosted creative integrations and MCP Apps UI are outside this release.
+Requires **Node.js 22.23.4, 24.22.1 or 26.12.1**, or a newer release of one of these lines. Older releases lack the October 2026 security fixes, and the server prints a warning on stderr when it starts on one. CI covers Node 22, 24 and 26.
+
+This release makes no breaking change to the configuration. One change is announced for 3.0.0: `GSC_SITE_URLS` is optional in 2.x and becomes required. When set, every tool is limited to the listed properties, and `GSC_SITE_URL` must be one of them. When unset, the server starts as before and prints one line on stderr recommending it. The 20 tools, their schemas and the bounded reporting limits are unchanged.
 
 ## Install this release
 
 This is a GitHub source release. npm and MCP Registry versions are published separately. The commands below select this exact version; unpinned `npx` examples later in this document select the version currently available on npm.
 
 ```bash
-git clone --branch v2.0.1 --depth 1 https://github.com/get-mcp-ads/google-search-console-mcp-server.git
+git clone --branch v2.1.0 --depth 1 https://github.com/get-mcp-ads/google-search-console-mcp-server.git
 cd google-search-console-mcp-server
 npm ci
 npm run build
@@ -186,7 +207,8 @@ or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
       "env": {
         "GSC_CLIENT_ID": "your-client-id",
         "GSC_CLIENT_SECRET": "your-client-secret",
-        "GSC_REFRESH_TOKEN": "your-refresh-token"
+        "GSC_REFRESH_TOKEN": "your-refresh-token",
+        "GSC_SITE_URLS": "sc-domain:example.com"
       }
     }
   }
@@ -224,6 +246,7 @@ npm start
 | `GSC_REFRESH_TOKEN` | none | From the consent flow |
 | `GSC_ACCESS_TOKEN` | none | Alternative to the three above, expires within the hour |
 | `GSC_SITE_URL` | none | Optional default property |
+| `GSC_SITE_URLS` | *unset* | Recommended. Comma-separated properties every tool is limited to, written exactly as Search Console shows them. Unset, every property the credentials reach is available. Required in 3.0.0 |
 | `LOG_LEVEL` | `info` | `debug`, `info`, `warn`, `error` |
 
 Either the three OAuth values, or `GSC_ACCESS_TOKEN`. The server refuses to start with neither.
@@ -286,9 +309,14 @@ Every tool is listed below. See [server-card.json](server-card.json) for complet
 ## Security
 
 - **The client secret and refresh token are never logged**, at any log level, or written to disk.
-- **Four hosts are contacted, and only four**: `searchconsole.googleapis.com` and
-  `www.googleapis.com` for the API, `oauth2.googleapis.com` and `accounts.google.com` for
-  OAuth. *A test fails the build if a fifth host appears in the source.*
+- **A revoked refresh token is reported once.** When Google answers `invalid_grant`, every
+  later call returns the same message with the steps to authorize again, and the server stops
+  asking Google for a token until it restarts.
+- **Properties can be limited.** With `GSC_SITE_URLS` set, a call naming another property is
+  refused before any request, and `gsc_list_sites` lists only the allowed properties.
+- **Three hosts are contacted, and only three**: `searchconsole.googleapis.com` and
+  `www.googleapis.com` for the API, `oauth2.googleapis.com` for the token refresh. *A test
+  fails the build if a fourth host appears in the source.*
 - **No fetch follows a redirect.** Every outbound call sets `redirect: "error"`, so a redirect
   cannot forward a bearer token or client secret to another host. *A test fails the build if
   any fetch omits this.*

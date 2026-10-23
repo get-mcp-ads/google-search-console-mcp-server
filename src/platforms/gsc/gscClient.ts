@@ -9,8 +9,6 @@
 // ============================================
 
 import {
-  GSCTokenResponse,
-  GSCRefreshTokenResponse,
   GSCSite,
   GSCSiteEntry,
   GSCSearchAnalyticsRequest,
@@ -22,17 +20,11 @@ import {
   GSCApiException,
   GSC_API_BASE,
   GSC_WEBMASTERS_API_BASE,
-  GOOGLE_OAUTH_AUTH_URL,
-  GOOGLE_OAUTH_TOKEN_URL,
-  GSC_OAUTH_SCOPE,
 } from "./types.js";
+import { MAX_API_RESPONSE_BYTES, readBoundedJson } from "../../core/http.js";
+import { assertSiteAllowed, assertUrlSiteAllowed, siteIsAllowed } from "../../core/account-scope.js";
 
 export { GSCApiException } from "./types.js";
-
-type GoogleOAuthError = {
-  error?: string;
-  error_description?: string;
-};
 
 type GoogleApiErrorBody = {
   error?: {
@@ -76,113 +68,19 @@ const GSC_SINGLE_REQUEST_TIMEOUT_MS = 90_000;
 // STATIC METHODS (OAuth Flow)
 // ============================================
 
-/**
- * Generate Google OAuth2 authorization URL for GSC
- */
-export function getAuthorizationUrl(
-  clientId: string,
-  redirectUri: string,
-  state: string
-): string {
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: GSC_OAUTH_SCOPE,
-    access_type: "offline",
-    prompt: "consent",
-    state,
-  });
-
-  return `${GOOGLE_OAUTH_AUTH_URL}?${params.toString()}`;
-}
-
-/**
- * Exchange authorization code for access token
- */
-export async function exchangeCodeForToken(
-  code: string,
-  clientId: string,
-  clientSecret: string,
-  redirectUri: string
-): Promise<GSCTokenResponse> {
-  const response = await fetch(GOOGLE_OAUTH_TOKEN_URL, {
-    method: "POST",
-    redirect: "error",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({})) as GoogleOAuthError;
-    throw new GSCApiException(
-      error.error_description || error.error || "Failed to exchange code for token",
-      response.status,
-      error.error
-    );
-  }
-
-  return response.json() as Promise<GSCTokenResponse>;
-}
-
-/**
- * Refresh access token using refresh token
- * Note: Google refresh tokens never expire
- */
-export async function refreshAccessToken(
-  refreshToken: string,
-  clientId: string,
-  clientSecret: string
-): Promise<GSCRefreshTokenResponse> {
-  const response = await fetch(GOOGLE_OAUTH_TOKEN_URL, {
-    method: "POST",
-    redirect: "error",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-      client_id: clientId,
-      client_secret: clientSecret,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({})) as GoogleOAuthError;
-    throw new GSCApiException(
-      error.error_description || error.error || "Failed to refresh token",
-      response.status,
-      error.error
-    );
-  }
-
-  return response.json() as Promise<GSCRefreshTokenResponse>;
-}
-
 // ============================================
 // GSC CLIENT CLASS
 // ============================================
 
 export class GSCClient {
   private accessToken: string;
+  private readonly allowedSiteUrls?: readonly string[];
 
-  constructor(accessToken: string) {
+  /** The access token comes from the caller; this server runs no OAuth browser flow. */
+  constructor(accessToken: string, allowedSiteUrls?: readonly string[]) {
     this.accessToken = accessToken;
+    this.allowedSiteUrls = allowedSiteUrls;
   }
-
-  // Static methods
-  static getAuthorizationUrl = getAuthorizationUrl;
-  static exchangeCodeForToken = exchangeCodeForToken;
-  static refreshAccessToken = refreshAccessToken;
 
   // ============================================
   // PRIVATE METHODS
@@ -196,6 +94,8 @@ export class GSCClient {
     if (!Number.isFinite(timeoutMs) || timeoutMs < 1) {
       throw new GSCApiException("GSC request deadline expired before dispatch", 408, "TIMEOUT");
     }
+    // A property outside GSC_SITE_URLS is refused before the bearer token is sent.
+    assertUrlSiteAllowed(this.allowedSiteUrls, url);
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -212,6 +112,7 @@ export class GSCClient {
       });
 
       if (!response.ok) {
+        await response.body?.cancel().catch(() => undefined);
         const failure = codeOwnedApiFailure(response.status);
         console.error("[GSCClient] API error", {
           status: response.status,
@@ -225,7 +126,11 @@ export class GSCClient {
         );
       }
 
-      return await response.json() as T;
+      const payload = await readBoundedJson<T>(response, MAX_API_RESPONSE_BYTES, "GSC API");
+      if (typeof payload === "string") {
+        throw new GSCApiException("GSC API returned a reply that is not JSON.", 502, "INVALID_RESPONSE");
+      }
+      return payload;
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         throw new GSCApiException(
@@ -253,7 +158,8 @@ export class GSCClient {
       `${GSC_WEBMASTERS_API_BASE}/sites`
     );
 
-    return (response.siteEntry || []).map((entry) => ({
+    // Discovery lists only the properties GSC_SITE_URLS allows.
+    return (response.siteEntry || []).filter((entry) => siteIsAllowed(this.allowedSiteUrls, entry.siteUrl)).map((entry) => ({
       siteUrl: entry.siteUrl,
       permissionLevel: entry.permissionLevel as GSCSite["permissionLevel"],
     }));
@@ -398,6 +304,8 @@ export class GSCClient {
     siteUrl: string,
     languageCode?: string
   ): Promise<GSCInspectUrlResponse> {
+    // The property travels in the body here, not in the path.
+    assertSiteAllowed(this.allowedSiteUrls, siteUrl);
     const url = `${GSC_API_BASE}/v1/urlInspection/index:inspect`;
 
     const body: GSCInspectUrlRequest = {

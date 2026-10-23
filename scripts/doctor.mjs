@@ -15,7 +15,7 @@ const MCP = {
     ["GSC_ACCESS_TOKEN"],
     ["GSC_CLIENT_ID", "GSC_CLIENT_SECRET", "GSC_REFRESH_TOKEN"],
   ],
-  optionalEnv: ["GSC_SITE_URL", "LOG_LEVEL"],
+  optionalEnv: ["GSC_SITE_URLS", "GSC_SITE_URL", "LOG_LEVEL"],
 };
 
 const CLAUDE_CONFIG_PATH = path.join(
@@ -257,9 +257,19 @@ async function checkReadOnlyPosture() {
   };
 }
 
-function buildWarningsAndActions({ envCheck, packageCheck, claudeCheck, readOnlyCheck }) {
+function buildWarningsAndActions({ runtimeCheck, allowlistCheck, envCheck, packageCheck, claudeCheck, readOnlyCheck }) {
   const warnings = [];
   const nextActions = [];
+
+  if (!runtimeCheck.ok) {
+    warnings.push(runtimeCheck.warning);
+    nextActions.push("Install Node.js 22.23.4, 24.22.1, 26.12.1 or a newer release of one of these lines.");
+  }
+
+  if (!allowlistCheck.configured) {
+    warnings.push("GSC_SITE_URLS is not set. It becomes required in 3.0.0.");
+    nextActions.push("List the Search Console properties this server may use in GSC_SITE_URLS.");
+  }
 
   if (!envCheck.ok) {
     warnings.push("Missing required environment variables in both current process and matching Claude Desktop config.");
@@ -287,22 +297,48 @@ function buildWarningsAndActions({ envCheck, packageCheck, claudeCheck, readOnly
   return { warnings, nextActions };
 }
 
+// The check lives in src/runtime-check.ts and ships in the build.
+async function checkRuntime() {
+  try {
+    const { nodeRuntimeWarning } = await import("../dist/index.js");
+    const warning = nodeRuntimeWarning();
+    return { name: "nodeRuntime", ok: !warning, node: process.versions.node, ...(warning ? { warning } : {}) };
+  } catch {
+    return {
+      name: "nodeRuntime",
+      ok: false,
+      node: process.versions.node,
+      warning: "Run npm run build first, then npm run doctor again to check this Node.js release.",
+    };
+  }
+}
+
+function checkAllowlist() {
+  const configured = Boolean((process.env.GSC_SITE_URLS ?? "").trim());
+  return { name: "siteAllowlist", ok: true, configured };
+}
+
 async function main() {
+  const runtimeCheck = await checkRuntime();
+  if (runtimeCheck.warning) process.stderr.write(`${runtimeCheck.warning}\n`);
+  const allowlistCheck = checkAllowlist();
   const claudeCheck = await checkClaudeDesktopConfig();
   const claudeEnvPresence = new Map((claudeCheck.envKeys ?? []).map((envKey) => [envKey.name, envKey.present]));
   const envCheck = checkEnvironment(claudeEnvPresence);
   const packageCheck = await checkPackageAndBuild();
   const readOnlyCheck = await checkReadOnlyPosture();
   const { warnings, nextActions } = buildWarningsAndActions({
+    runtimeCheck,
+    allowlistCheck,
     envCheck,
     packageCheck,
     claudeCheck,
     readOnlyCheck,
   });
-  const hardChecksOk = envCheck.ok && packageCheck.ok && claudeCheck.ok;
+  const hardChecksOk = runtimeCheck.ok && envCheck.ok && packageCheck.ok && claudeCheck.ok;
   const result = {
     ok: hardChecksOk,
-    checks: [envCheck, packageCheck, claudeCheck, readOnlyCheck],
+    checks: [runtimeCheck, allowlistCheck, envCheck, packageCheck, claudeCheck, readOnlyCheck],
     warnings,
     nextActions,
   };

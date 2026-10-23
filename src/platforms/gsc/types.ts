@@ -331,8 +331,6 @@ export class GSCApiException extends Error {
 
 export const GSC_API_BASE = "https://searchconsole.googleapis.com";
 export const GSC_WEBMASTERS_API_BASE = "https://www.googleapis.com/webmasters/v3";
-export const GOOGLE_OAUTH_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-export const GOOGLE_OAUTH_TOKEN_URL = "https://oauth2.googleapis.com/token";
 export const GSC_OAUTH_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 
 // ============================================

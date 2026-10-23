@@ -1,8 +1,8 @@
 {
   "name": "@getmcpads/google-search-console-mcp-server",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "mcpName": "com.getmcpads/google-search-console",
-  "description": "Google Search Console MCP server: 20 read tools.",
+  "description": "Google Search Console MCP server: 20 read tools, no write tools.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -26,10 +26,11 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run typecheck && npm run build && node scripts/generate-catalog.mjs && npm test",
     "catalog": "npm run build && node scripts/generate-catalog.mjs",
-    "bundle": "npm run catalog && node scripts/build-mcpb.mjs"
+    "bundle": "npm run catalog && node scripts/build-mcpb.mjs",
+    "release-history": "node scripts/release-history.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
@@ -43,7 +44,7 @@
     "typescript-eslint": "^8.0.0"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": "^22.23.4 || ^24.22.1 || >=26.12.1"
   },
   "files": [
     "dist/",

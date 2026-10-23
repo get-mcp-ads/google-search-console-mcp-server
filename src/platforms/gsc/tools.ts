@@ -7,8 +7,8 @@ import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { GSCConfig } from "../../config.js";
 import { formatMcpToolError } from "../../core/errors.js";
-import { RateLimiter } from "../../core/rate-limiter.js";
-import { GSCClient, refreshAccessToken } from "./gscClient.js";
+import { GSCClient } from "./gscClient.js";
+import { GoogleTokenSource } from "../../core/google-oauth.js";
 import { planGSCQuery } from "./queryPlanner.js";
 import { enrichWithCalculatedMetrics } from "./calculatedMetrics.js";
 import { validateGSCQuerySelection } from "./compatibilityRules.js";
@@ -153,37 +153,37 @@ function ok(data: unknown) {
 }
 
 class AuthenticatedGSCClient {
-  private accessToken: string | undefined;
-  private tokenExpiresAt = 0;
-  private rateLimiter = new RateLimiter();
+  private readonly staticTokenExpiresAt: number;
+  /**
+   * One source for the process, so a refused refresh token is detected once:
+   * after `invalid_grant` every call gets the same re-authorization message and
+   * no further token request is sent.
+   */
+  private readonly tokenSource: GoogleTokenSource | undefined;
 
   constructor(private readonly config: GSCConfig) {
-    this.accessToken = config.accessToken;
-    if (config.accessToken) {
-      this.tokenExpiresAt = Date.now() + 45 * 60 * 1000;
-    }
+    // A static GSC_ACCESS_TOKEN is trusted for 45 minutes, then the refresh credentials take over.
+    this.staticTokenExpiresAt = config.accessToken ? Date.now() + 45 * 60 * 1000 : 0;
+    this.tokenSource = config.refreshToken && config.clientId && config.clientSecret
+      ? new GoogleTokenSource(
+          { clientId: config.clientId, clientSecret: config.clientSecret, refreshToken: config.refreshToken },
+          "GSC_REFRESH_TOKEN",
+        )
+      : undefined;
   }
 
   private async ensureAccessToken(): Promise<string> {
-    if (this.accessToken && Date.now() < this.tokenExpiresAt) {
-      return this.accessToken;
+    if (this.config.accessToken && Date.now() < this.staticTokenExpiresAt) {
+      return this.config.accessToken;
     }
-
-    if (!this.config.refreshToken || !this.config.clientId || !this.config.clientSecret) {
+    if (!this.tokenSource) {
       throw new Error("No valid GSC access token and refresh credentials are incomplete.");
     }
-
-    const tokens = await this.rateLimiter.execute(() =>
-      refreshAccessToken(this.config.refreshToken!, this.config.clientId!, this.config.clientSecret!),
-    );
-
-    this.accessToken = tokens.access_token;
-    this.tokenExpiresAt = Date.now() + ((tokens.expires_in ?? 3600) - 60) * 1000;
-    return this.accessToken;
+    return this.tokenSource.getAccessToken();
   }
 
   async get(): Promise<GSCClient> {
-    return new GSCClient(await this.ensureAccessToken());
+    return new GSCClient(await this.ensureAccessToken(), this.config.allowedSiteUrls);
   }
 }
 

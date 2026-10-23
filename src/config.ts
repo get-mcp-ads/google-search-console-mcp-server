@@ -5,6 +5,7 @@
  */
 import { z } from "zod";
 import { logger } from "./core/logger.js";
+import { SITE_URLS_ENV, parseSiteUrls, siteIsAllowed } from "./core/account-scope.js";
 
 const configSchema = z.object({
   clientId: z.string().optional(),
@@ -12,6 +13,8 @@ const configSchema = z.object({
   refreshToken: z.string().optional(),
   accessToken: z.string().optional(),
   defaultSiteUrl: z.string().optional(),
+  /** Search Console properties every tool is limited to. Undefined: every property the credentials reach. */
+  allowedSiteUrls: z.array(z.string()).optional(),
   logLevel: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });
 
@@ -24,6 +27,7 @@ export function loadConfig(): GSCConfig {
     refreshToken: process.env["GSC_REFRESH_TOKEN"] || undefined,
     accessToken: process.env["GSC_ACCESS_TOKEN"] || undefined,
     defaultSiteUrl: process.env["GSC_SITE_URL"] || undefined,
+    allowedSiteUrls: parseSiteUrls(process.env[SITE_URLS_ENV]),
     logLevel: process.env["LOG_LEVEL"] ?? "info",
   };
 
@@ -42,5 +46,22 @@ export function loadConfig(): GSCConfig {
     );
   }
 
+  // Both variables are explicit together, so refusing a mismatch breaks no existing setup.
+  if (config.defaultSiteUrl && !siteIsAllowed(config.allowedSiteUrls, config.defaultSiteUrl)) {
+    throw new Error(`GSC_SITE_URL must be one of the properties listed in ${SITE_URLS_ENV}.`);
+  }
+
   return config;
+}
+
+/**
+ * Lines the CLI writes to stderr at startup, never to stdout, which carries the
+ * MCP protocol. Nothing here changes what the server does.
+ */
+export function startupNotices(env: NodeJS.ProcessEnv = process.env): string[] {
+  if (env[SITE_URLS_ENV]?.trim()) return [];
+  return [
+    `${SITE_URLS_ENV} is not set, so every Search Console property these credentials reach is available. ` +
+      "List the properties this server may use. The variable becomes required in 3.0.0.",
+  ];
 }

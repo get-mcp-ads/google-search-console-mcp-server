@@ -18,7 +18,8 @@ you ask us not to.
 
 | Version | Supported |
 | ------- | --------- |
-| 1.x     | ✅        |
+| 2.x     | ✅        |
+| 1.x     | ❌        |
 
 ## This server cannot write
 
@@ -34,10 +35,9 @@ The scope it asks for reflects that: `webmasters.readonly`, not `webmasters`.
 - The OAuth client secret, refresh token and any access token are read once
   from the environment at startup and kept in memory. None is ever written to
   disk or logged, at any log level.
-- **Four hosts are contacted, and only four**: `searchconsole.googleapis.com`
-  and `www.googleapis.com` for the API, `oauth2.googleapis.com` and
-  `accounts.google.com` for the OAuth flow. *A test fails the build if a fifth
-  host appears in the source.*
+- **Three hosts are contacted, and only three**: `searchconsole.googleapis.com`
+  and `www.googleapis.com` for the API, `oauth2.googleapis.com` for the token
+  refresh. *A test fails the build if a fourth host appears in the source.*
 - **No fetch follows a redirect.** Every outbound call sets `redirect: "error"`,
   so a redirect cannot forward a bearer token or client secret to another host.
   *A test fails the build if any fetch omits this.*
