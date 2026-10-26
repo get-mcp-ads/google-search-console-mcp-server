@@ -58,7 +58,7 @@ const searchTypeSchema = z.enum(["web", "image", "video", "news", "discover", "g
 const dataStateSchema = z.enum(["final", "all", "hourly_all"]);
 const aggregationTypeSchema = z.enum(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
 export const CompareSearchTypesSchema = z.array(searchTypeSchema).min(1).max(6).refine(items => new Set(items).size === items.length, "searchTypes must be unique");
-const limitSchema = z.number().int().min(1).max(25000).optional().default(1000);
+const limitSchema = z.number().int().min(1).max(25000).prefault(1000);
 const dateRangeSchema = z.object({
   startDate: z.string().describe("Start date YYYY-MM-DD"),
   endDate: z.string().describe("End date YYYY-MM-DD"),
@@ -66,19 +66,19 @@ const dateRangeSchema = z.object({
 const comparisonDimensionSchema = z.enum(["query", "page"]);
 const sitemapBaselineSchema = z.object({
   path: z.string().describe("Sitemap URL/path returned by GSC."),
-  submitted: z.number().int().min(0).optional().default(0),
-  indexed: z.number().int().min(0).optional().default(0),
-  warnings: z.number().int().min(0).optional().default(0),
-  errors: z.number().int().min(0).optional().default(0),
+  submitted: z.number().int().min(0).prefault(0),
+  indexed: z.number().int().min(0).prefault(0),
+  warnings: z.number().int().min(0).prefault(0),
+  errors: z.number().int().min(0).prefault(0),
   lastSubmitted: z.string().optional(),
   lastDownloaded: z.string().optional(),
 });
 const watchlistUrlSchema = z.object({
   url: z.string().url(),
   label: z.string().optional(),
-  priority: z.enum(["low", "medium", "high", "critical"]).optional().default("medium"),
-  tags: z.array(z.string()).optional().default([]),
-  expectedVerdict: z.enum(["PASS", "PARTIAL", "FAIL", "NEUTRAL", "VERDICT_UNSPECIFIED"]).optional().default("PASS"),
+  priority: z.enum(["low", "medium", "high", "critical"]).prefault("medium"),
+  tags: z.array(z.string()).prefault([]),
+  expectedVerdict: z.enum(["PASS", "PARTIAL", "FAIL", "NEUTRAL", "VERDICT_UNSPECIFIED"]).prefault("PASS"),
   expectedCanonical: z.string().url().optional(),
   expectedCoverageState: z.string().optional(),
 });
@@ -791,19 +791,19 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
         operator: z.enum(["contains", "equals", "notContains", "notEquals", "includingRegex", "excludingRegex"]),
         value: z.union([z.string(), z.number(), z.boolean()]),
       })).optional(),
-      searchType: searchTypeSchema.optional().default("web"),
-      dataState: dataStateSchema.optional().default("all").describe("final=stable data, all=fresh daily data, hourly_all=fresh hourly data (use hour dimension)."),
-      aggregationType: aggregationTypeSchema.optional().default("auto").describe("Official GSC aggregation. byProperty is incompatible with page grouping/filtering and Discover/Google News. byNewsShowcasePanel requires discover/googleNews plus searchAppearance equals NEWS_SHOWCASE, and forbids page grouping/filtering or another searchAppearance filter."),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchType: searchTypeSchema.prefault("web"),
+      dataState: dataStateSchema.prefault("all").describe("final=stable data, all=fresh daily data, hourly_all=fresh hourly data (use hour dimension)."),
+      aggregationType: aggregationTypeSchema.prefault("auto").describe("Official GSC aggregation. byProperty is incompatible with page grouping/filtering and Discover/Google News. byNewsShowcasePanel requires discover/googleNews plus searchAppearance equals NEWS_SHOWCASE, and forbids page grouping/filtering or another searchAppearance filter."),
+      datePreset: datePresetSchema.prefault("last28days"),
       dateRange: z.object({
         startDate: z.string().describe("Start date YYYY-MM-DD"),
         endDate: z.string().describe("End date YYYY-MM-DD"),
       }).optional(),
-      orderBy: z.enum(["clicks", "impressions", "ctr", "position", "ctrOpportunity", "clicksPerImpression", "impressionShare", "clickShare"]).optional().default("clicks"),
-      orderDirection: z.enum(["ASC", "DESC"]).optional().default("DESC"),
+      orderBy: z.enum(["clicks", "impressions", "ctr", "position", "ctrOpportunity", "clicksPerImpression", "impressionShare", "clickShare"]).prefault("clicks"),
+      orderDirection: z.enum(["ASC", "DESC"]).prefault("DESC"),
       limit: limitSchema,
       startRow: z.number().int().min(0).optional().describe("Optional 0-based row offset for explicit pagination."),
-      autoPaginate: z.boolean().optional().default(false).describe("When true, omit rowLimit so the GSC client auto-paginates until exhaustion."),
+      autoPaginate: z.boolean().prefault(false).describe("When true, omit rowLimit so the GSC client auto-paginates until exhaustion."),
     },
     async ({ siteUrl, metrics, dimensions, filters, searchType, dataState, aggregationType, datePreset, dateRange, orderBy, orderDirection, limit, startRow, autoPaginate }) => {
       try {
@@ -907,7 +907,7 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
       siteUrl: siteUrlSchema,
       urls: z.array(z.string().url()).min(1).max(BULK_URL_INSPECTION_LIMIT).describe(`Full URLs to inspect. Maximum ${BULK_URL_INSPECTION_LIMIT} per call to protect URL Inspection quota.`),
       languageCode: z.string().optional().describe("Optional IETF language tag, e.g. en-US or fr-FR."),
-      continueOnError: z.boolean().optional().default(true).describe("When true, returns per-URL errors instead of failing the entire batch."),
+      continueOnError: z.boolean().prefault(true).describe("When true, returns per-URL errors instead of failing the entire batch."),
     },
     async ({ siteUrl, urls, languageCode, continueOnError }) => {
       try {
@@ -1059,8 +1059,8 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Compare performance across Search Console search types: web, image, video, news, discover, and Google News.",
     {
       siteUrl: siteUrlSchema,
-      searchTypes: CompareSearchTypesSchema.optional().default(["web", "image", "video", "discover"]),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchTypes: CompareSearchTypesSchema.prefault(["web", "image", "video", "discover"]),
+      datePreset: datePresetSchema.prefault("last28days"),
       dateRange: z.object({ startDate: z.string(), endDate: z.string() }).optional(),
     },
     async ({ siteUrl, searchTypes, datePreset, dateRange }) => {
@@ -1110,8 +1110,8 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Detect the most recent date with Search Analytics data by querying recent daily rows.",
     {
       siteUrl: siteUrlSchema,
-      searchType: searchTypeSchema.optional().default("web"),
-      lookbackDays: z.number().int().min(3).max(30).optional().default(14).describe("Recent days to scan for daily data. Max 30."),
+      searchType: searchTypeSchema.prefault("web"),
+      lookbackDays: z.number().int().min(3).max(30).prefault(14).describe("Recent days to scan for daily data. Max 30."),
     },
     async ({ siteUrl, searchType, lookbackDays }) => {
       try {
@@ -1173,10 +1173,10 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Read-only monitoring snapshot for Search Analytics freshness, sitemap indexation totals, and an optional small URL Inspection sample.",
     {
       siteUrl: siteUrlSchema,
-      searchTypes: z.array(searchTypeSchema).min(1).max(6).optional().default(["web"]),
-      lookbackDays: z.number().int().min(3).max(30).optional().default(14).describe("Recent days to scan for Search Analytics freshness."),
-      freshnessLagWarningDays: z.number().int().min(1).max(14).optional().default(DEFAULT_FRESHNESS_LAG_WARNING_DAYS).describe("Maximum acceptable lag in days before freshness is marked delayed/stale."),
-      inspectUrls: z.array(z.string().url()).max(BULK_URL_INSPECTION_LIMIT).optional().default([]).describe(`Optional URLs to inspect. Maximum ${BULK_URL_INSPECTION_LIMIT} to protect URL Inspection quota.`),
+      searchTypes: z.array(searchTypeSchema).min(1).max(6).prefault(["web"]),
+      lookbackDays: z.number().int().min(3).max(30).prefault(14).describe("Recent days to scan for Search Analytics freshness."),
+      freshnessLagWarningDays: z.number().int().min(1).max(14).prefault(DEFAULT_FRESHNESS_LAG_WARNING_DAYS).describe("Maximum acceptable lag in days before freshness is marked delayed/stale."),
+      inspectUrls: z.array(z.string().url()).max(BULK_URL_INSPECTION_LIMIT).prefault([]).describe(`Optional URLs to inspect. Maximum ${BULK_URL_INSPECTION_LIMIT} to protect URL Inspection quota.`),
       languageCode: z.string().optional().describe("Optional IETF language tag for URL Inspection, e.g. en-US or fr-FR."),
     },
     async ({ siteUrl, searchTypes, lookbackDays, freshnessLagWarningDays, inspectUrls, languageCode }) => {
@@ -1289,9 +1289,9 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Read-only sitemap delta tracker. Fetches the current sitemap snapshot and compares it to an agent-provided baseline; no state is written.",
     {
       siteUrl: siteUrlSchema,
-      baseline: z.array(sitemapBaselineSchema).optional().default([]).describe("Previous snapshot entries from this tool's snapshot output."),
-      includeUnchanged: z.boolean().optional().default(false),
-      minAbsIndexedDelta: z.number().int().min(0).optional().default(1).describe("Minimum absolute indexed URL delta to include otherwise unchanged sitemaps."),
+      baseline: z.array(sitemapBaselineSchema).prefault([]).describe("Previous snapshot entries from this tool's snapshot output."),
+      includeUnchanged: z.boolean().prefault(false),
+      minAbsIndexedDelta: z.number().int().min(0).prefault(1).describe("Minimum absolute indexed URL delta to include otherwise unchanged sitemaps."),
     },
     async ({ siteUrl, baseline, includeUnchanged, minAbsIndexedDelta }) => {
       try {
@@ -1391,15 +1391,15 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Analyze structured data and rich-result trend signals via the Search Analytics searchAppearance dimension when GSC exposes it.",
     {
       siteUrl: siteUrlSchema,
-      searchType: searchTypeSchema.optional().default("web"),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchType: searchTypeSchema.prefault("web"),
+      datePreset: datePresetSchema.prefault("last28days"),
       currentDateRange: dateRangeSchema.optional().describe("Current period. Defaults to datePreset."),
       previousDateRange: dateRangeSchema.optional().describe("Previous period. Defaults to the immediately preceding period with the same length."),
-      includePages: z.boolean().optional().default(false).describe("When true, groups by searchAppearance + page for page-level rich result trends."),
-      limit: z.number().int().min(1).max(25000).optional().default(5000),
-      topN: z.number().int().min(1).max(100).optional().default(50),
-      minImpressions: z.number().int().min(0).optional().default(0),
-      sortBy: z.enum(["currentClicks", "currentImpressions", "clicksDelta", "impressionsDelta", "positionDelta"]).optional().default("impressionsDelta"),
+      includePages: z.boolean().prefault(false).describe("When true, groups by searchAppearance + page for page-level rich result trends."),
+      limit: z.number().int().min(1).max(25000).prefault(5000),
+      topN: z.number().int().min(1).max(100).prefault(50),
+      minImpressions: z.number().int().min(0).prefault(0),
+      sortBy: z.enum(["currentClicks", "currentImpressions", "clicksDelta", "impressionsDelta", "positionDelta"]).prefault("impressionsDelta"),
     },
     async ({ siteUrl, searchType, datePreset, currentDateRange, previousDateRange, includePages, limit, topN, minImpressions, sortBy }) => {
       try {
@@ -1509,14 +1509,14 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Build a read-only URL Inspection sampling plan for large sites from sitemap risk signals and Search Analytics page performance.",
     {
       siteUrl: siteUrlSchema,
-      searchType: searchTypeSchema.optional().default("web"),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchType: searchTypeSchema.prefault("web"),
+      datePreset: datePresetSchema.prefault("last28days"),
       dateRange: dateRangeSchema.optional(),
-      objectives: z.array(samplingObjectiveSchema).min(1).max(5).optional().default(["topTraffic", "lowCtr", "declining", "sitemapRisk", "staleSitemaps"]),
-      pageLimit: z.number().int().min(1).max(25000).optional().default(5000),
-      maxInspectionUrls: z.number().int().min(1).max(BULK_URL_INSPECTION_LIMIT).optional().default(BULK_URL_INSPECTION_LIMIT),
-      minImpressionsForLowCtr: z.number().int().min(1).optional().default(100),
-      staleSitemapDays: z.number().int().min(1).max(180).optional().default(14),
+      objectives: z.array(samplingObjectiveSchema).min(1).max(5).prefault(["topTraffic", "lowCtr", "declining", "sitemapRisk", "staleSitemaps"]),
+      pageLimit: z.number().int().min(1).max(25000).prefault(5000),
+      maxInspectionUrls: z.number().int().min(1).max(BULK_URL_INSPECTION_LIMIT).prefault(BULK_URL_INSPECTION_LIMIT),
+      minImpressionsForLowCtr: z.number().int().min(1).prefault(100),
+      staleSitemapDays: z.number().int().min(1).max(180).prefault(14),
     },
     async ({ siteUrl, searchType, datePreset, dateRange, objectives, pageLimit, maxInspectionUrls, minImpressionsForLowCtr, staleSitemapDays }) => {
       try {
@@ -1667,7 +1667,7 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
       siteUrl: siteUrlSchema,
       urls: z.array(watchlistUrlSchema).min(1).max(BULK_URL_INSPECTION_LIMIT).describe(`Watchlist entries. Maximum ${BULK_URL_INSPECTION_LIMIT} per call to protect URL Inspection quota.`),
       languageCode: z.string().optional().describe("Optional IETF language tag, e.g. en-US or fr-FR."),
-      continueOnError: z.boolean().optional().default(true),
+      continueOnError: z.boolean().prefault(true),
     },
     async ({ siteUrl, urls, languageCode, continueOnError }) => {
       try {
@@ -1730,15 +1730,15 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Compare two periods for query or page performance and return click/impression/CTR/position deltas.",
     {
       siteUrl: siteUrlSchema,
-      dimension: comparisonDimensionSchema.optional().default("query"),
-      searchType: searchTypeSchema.optional().default("web"),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      dimension: comparisonDimensionSchema.prefault("query"),
+      searchType: searchTypeSchema.prefault("web"),
+      datePreset: datePresetSchema.prefault("last28days"),
       currentDateRange: dateRangeSchema.optional().describe("Current period. Defaults to datePreset."),
       previousDateRange: dateRangeSchema.optional().describe("Previous period. Defaults to the immediately preceding period with the same length."),
-      limit: z.number().int().min(1).max(25000).optional().default(5000).describe("Rows to fetch for each period."),
-      topN: z.number().int().min(1).max(100).optional().default(25),
-      minAbsClickDelta: z.number().min(0).optional().default(0).describe("Filter out rows with smaller absolute click delta."),
-      sortBy: z.enum(["clicksDelta", "impressionsDelta", "ctrDelta", "positionDelta"]).optional().default("clicksDelta"),
+      limit: z.number().int().min(1).max(25000).prefault(5000).describe("Rows to fetch for each period."),
+      topN: z.number().int().min(1).max(100).prefault(25),
+      minAbsClickDelta: z.number().min(0).prefault(0).describe("Filter out rows with smaller absolute click delta."),
+      sortBy: z.enum(["clicksDelta", "impressionsDelta", "ctrDelta", "positionDelta"]).prefault("clicksDelta"),
     },
     async ({ siteUrl, dimension, searchType, datePreset, currentDateRange, previousDateRange, limit, topN, minAbsClickDelta, sortBy }) => {
       try {
@@ -1855,14 +1855,14 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Cluster Search Console queries by simple tokens and intent signals: brand/non-brand, question, category, and topic tokens.",
     {
       siteUrl: siteUrlSchema,
-      searchType: searchTypeSchema.optional().default("web"),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchType: searchTypeSchema.prefault("web"),
+      datePreset: datePresetSchema.prefault("last28days"),
       dateRange: dateRangeSchema.optional(),
-      brandTerms: z.array(z.string()).optional().default([]).describe("Optional brand terms. Defaults to terms derived from the property domain."),
-      categoryRules: z.record(z.array(z.string())).optional().describe("Optional map of category name to matching tokens/phrases."),
-      limit: z.number().int().min(1).max(25000).optional().default(5000),
-      maxClusters: z.number().int().min(1).max(100).optional().default(25),
-      topQueriesPerCluster: z.number().int().min(1).max(25).optional().default(10),
+      brandTerms: z.array(z.string()).prefault([]).describe("Optional brand terms. Defaults to terms derived from the property domain."),
+      categoryRules: z.record(z.string(), z.array(z.string())).optional().describe("Optional map of category name to matching tokens/phrases."),
+      limit: z.number().int().min(1).max(25000).prefault(5000),
+      maxClusters: z.number().int().min(1).max(100).prefault(25),
+      topQueriesPerCluster: z.number().int().min(1).max(25).prefault(10),
     },
     async ({ siteUrl, searchType, datePreset, dateRange, brandTerms, categoryRules, limit, maxClusters, topQueriesPerCluster }) => {
       try {
@@ -1941,14 +1941,14 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Detect queries where multiple pages compete for clicks/impressions in Search Analytics query-page rows.",
     {
       siteUrl: siteUrlSchema,
-      searchType: searchTypeSchema.optional().default("web"),
-      datePreset: datePresetSchema.optional().default("last28days"),
+      searchType: searchTypeSchema.prefault("web"),
+      datePreset: datePresetSchema.prefault("last28days"),
       dateRange: dateRangeSchema.optional(),
-      limit: z.number().int().min(1).max(25000).optional().default(5000),
-      minPages: z.number().int().min(2).max(10).optional().default(2),
-      minImpressions: z.number().int().min(0).optional().default(100),
-      maxTopPageClickShare: z.number().min(0.1).max(0.99).optional().default(0.8).describe("Only flag queries where the top page owns less than or equal to this click share."),
-      topN: z.number().int().min(1).max(100).optional().default(25),
+      limit: z.number().int().min(1).max(25000).prefault(5000),
+      minPages: z.number().int().min(2).max(10).prefault(2),
+      minImpressions: z.number().int().min(0).prefault(100),
+      maxTopPageClickShare: z.number().min(0.1).max(0.99).prefault(0.8).describe("Only flag queries where the top page owns less than or equal to this click share."),
+      topN: z.number().int().min(1).max(100).prefault(25),
     },
     async ({ siteUrl, searchType, datePreset, dateRange, limit, minPages, minImpressions, maxTopPageClickShare, topN }) => {
       try {
@@ -2059,7 +2059,7 @@ Use gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for 
     "Validate a Search Console metric/dimension/search type combination before executing it.",
     {
       dimensions: z.array(z.string()).optional().describe("Dimensions to validate."),
-      searchType: searchTypeSchema.optional().default("web"),
+      searchType: searchTypeSchema.prefault("web"),
       dateRange: z.object({ startDate: z.string(), endDate: z.string() }).optional(),
     },
     async ({ dimensions, searchType, dateRange }) => {

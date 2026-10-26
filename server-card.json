@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "@getmcpads/google-search-console-mcp-server",
     "title": "Google Search Console MCP server: 20 read tools, no write tools.",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "websiteUrl": "https://www.getmcpads.com/tools/search-console",
     "icons": [
       {
@@ -29,7 +29,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -54,8 +54,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -75,11 +75,10 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -90,7 +89,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -115,8 +114,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -136,11 +135,10 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -151,7 +149,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -176,8 +174,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -197,25 +195,26 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "metrics": {
+            "description": "Native: clicks, impressions, ctr, position. Calculated: ctrOpportunity, clicksPerImpression, impressionShare, clickShare.",
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Native: clicks, impressions, ctr, position. Calculated: ctrOpportunity, clicksPerImpression, impressionShare, clickShare."
+            }
           },
           "dimensions": {
+            "description": "Up to 5 dimensions selected from query, page, country, device, date, hour, searchAppearance.",
+            "maxItems": 5,
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "maxItems": 5,
-            "description": "Up to 5 dimensions selected from query, page, country, device, date, hour, searchAppearance."
+            }
           },
           "filters": {
+            "description": "Filters combined according to this tool's query schema. Use provider field names and the declared operators.",
             "type": "array",
             "items": {
               "type": "object",
@@ -246,12 +245,12 @@
                 "field",
                 "operator",
                 "value"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Filters combined according to this tool's query schema. Use provider field names and the declared operators."
+              ]
+            }
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -260,32 +259,32 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "dataState": {
+            "description": "final=stable data, all=fresh daily data, hourly_all=fresh hourly data (use hour dimension).",
+            "default": "all",
             "type": "string",
             "enum": [
               "final",
               "all",
               "hourly_all"
-            ],
-            "default": "all",
-            "description": "final=stable data, all=fresh daily data, hourly_all=fresh hourly data (use hour dimension)."
+            ]
           },
           "aggregationType": {
+            "description": "Official GSC aggregation. byProperty is incompatible with page grouping/filtering and Discover/Google News. byNewsShowcasePanel requires discover/googleNews plus searchAppearance equals NEWS_SHOWCASE, and forbids page grouping/filtering or another searchAppearance filter.",
+            "default": "auto",
             "type": "string",
             "enum": [
               "auto",
               "byPage",
               "byProperty",
               "byNewsShowcasePanel"
-            ],
-            "default": "auto",
-            "description": "Official GSC aggregation. byProperty is incompatible with page grouping/filtering and Discover/Google News. byNewsShowcasePanel requires discover/googleNews plus searchAppearance equals NEWS_SHOWCASE, and forbids page grouping/filtering or another searchAppearance filter."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -296,11 +295,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -315,11 +313,11 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           },
           "orderBy": {
+            "description": "Field used to order report rows.",
+            "default": "clicks",
             "type": "string",
             "enum": [
               "clicks",
@@ -330,38 +328,36 @@
               "clicksPerImpression",
               "impressionShare",
               "clickShare"
-            ],
-            "default": "clicks",
-            "description": "Field used to order report rows."
+            ]
           },
           "orderDirection": {
+            "description": "Sort direction for the selected ordering field.",
+            "default": "DESC",
             "type": "string",
             "enum": [
               "ASC",
               "DESC"
-            ],
-            "default": "DESC",
-            "description": "Sort direction for the selected ordering field."
+            ]
           },
           "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 1000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 1000,
-            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results."
+            "maximum": 25000
           },
           "startRow": {
+            "description": "Optional 0-based row offset for explicit pagination.",
             "type": "integer",
             "minimum": 0,
-            "description": "Optional 0-based row offset for explicit pagination."
+            "maximum": 9007199254740991
           },
           "autoPaginate": {
-            "type": "boolean",
+            "description": "When true, omit rowLimit so the GSC client auto-paginates until exhaustion.",
             "default": false,
-            "description": "When true, omit rowLimit so the GSC client auto-paginates until exhaustion."
+            "type": "boolean"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -372,7 +368,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -397,8 +393,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -418,8 +414,8 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "url": {
             "type": "string",
@@ -427,14 +423,13 @@
             "description": "Full URL to inspect."
           },
           "languageCode": {
-            "type": "string",
-            "description": "Optional IETF language tag, e.g. en-US or fr-FR."
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
           }
         },
         "required": [
           "url"
         ],
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -445,7 +440,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -470,8 +465,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -491,33 +486,32 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "urls": {
+            "minItems": 1,
+            "maxItems": 10,
             "type": "array",
             "items": {
               "type": "string",
               "format": "uri"
             },
-            "minItems": 1,
-            "maxItems": 10,
             "description": "Full URLs to inspect. Maximum 10 per call to protect URL Inspection quota."
           },
           "languageCode": {
-            "type": "string",
-            "description": "Optional IETF language tag, e.g. en-US or fr-FR."
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
           },
           "continueOnError": {
-            "type": "boolean",
+            "description": "When true, returns per-URL errors instead of failing the entire batch.",
             "default": true,
-            "description": "When true, returns per-URL errors instead of failing the entire batch."
+            "type": "boolean"
           }
         },
         "required": [
           "urls"
         ],
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -528,7 +522,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -553,8 +547,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -574,16 +568,15 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "sitemapIndex": {
+            "description": "Optional sitemap index URL used to return only its child sitemaps.",
             "type": "string",
-            "format": "uri",
-            "description": "Optional sitemap index URL used to return only its child sitemaps."
+            "format": "uri"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -594,7 +587,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -619,8 +612,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -640,8 +633,8 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "feedpath": {
             "type": "string",
@@ -652,7 +645,6 @@
         "required": [
           "feedpath"
         ],
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -663,7 +655,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -688,8 +680,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -709,11 +701,10 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -724,7 +715,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -749,8 +740,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -770,10 +761,19 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchTypes": {
+            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces.",
+            "default": [
+              "web",
+              "image",
+              "video",
+              "discover"
+            ],
+            "minItems": 1,
+            "maxItems": 6,
             "type": "array",
             "items": {
               "type": "string",
@@ -785,18 +785,11 @@
                 "discover",
                 "googleNews"
               ]
-            },
-            "minItems": 1,
-            "maxItems": 6,
-            "default": [
-              "web",
-              "image",
-              "video",
-              "discover"
-            ],
-            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces."
+            }
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -807,11 +800,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -824,12 +816,9 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -840,7 +829,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -865,8 +854,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -886,10 +875,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -898,19 +889,16 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "lookbackDays": {
+            "description": "Recent days to scan for daily data. Max 30.",
+            "default": 14,
             "type": "integer",
             "minimum": 3,
-            "maximum": 30,
-            "default": 14,
-            "description": "Recent days to scan for daily data. Max 30."
+            "maximum": 30
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -921,7 +909,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -946,8 +934,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -967,10 +955,16 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchTypes": {
+            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces.",
+            "default": [
+              "web"
+            ],
+            "minItems": 1,
+            "maxItems": 6,
             "type": "array",
             "items": {
               "type": "string",
@@ -982,44 +976,37 @@
                 "discover",
                 "googleNews"
               ]
-            },
-            "minItems": 1,
-            "maxItems": 6,
-            "default": [
-              "web"
-            ],
-            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces."
+            }
           },
           "lookbackDays": {
+            "description": "Recent days to scan for Search Analytics freshness.",
+            "default": 14,
             "type": "integer",
             "minimum": 3,
-            "maximum": 30,
-            "default": 14,
-            "description": "Recent days to scan for Search Analytics freshness."
+            "maximum": 30
           },
           "freshnessLagWarningDays": {
+            "description": "Maximum acceptable lag in days before freshness is marked delayed/stale.",
+            "default": 3,
             "type": "integer",
             "minimum": 1,
-            "maximum": 14,
-            "default": 3,
-            "description": "Maximum acceptable lag in days before freshness is marked delayed/stale."
+            "maximum": 14
           },
           "inspectUrls": {
+            "description": "Optional URLs to inspect. Maximum 10 to protect URL Inspection quota.",
+            "default": [],
+            "maxItems": 10,
             "type": "array",
             "items": {
               "type": "string",
               "format": "uri"
-            },
-            "maxItems": 10,
-            "default": [],
-            "description": "Optional URLs to inspect. Maximum 10 to protect URL Inspection quota."
+            }
           },
           "languageCode": {
-            "type": "string",
-            "description": "Optional IETF language tag for URL Inspection, e.g. en-US or fr-FR."
+            "description": "Optional IETF language tag for URL Inspection, e.g. en-US or fr-FR.",
+            "type": "string"
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1030,7 +1017,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1055,8 +1042,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1076,10 +1063,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "baseline": {
+            "description": "Previous snapshot entries from this tool's snapshot output.",
+            "default": [],
             "type": "array",
             "items": {
               "type": "object",
@@ -1089,24 +1078,28 @@
                   "description": "Sitemap URL/path returned by GSC."
                 },
                 "submitted": {
+                  "default": 0,
                   "type": "integer",
                   "minimum": 0,
-                  "default": 0
+                  "maximum": 9007199254740991
                 },
                 "indexed": {
+                  "default": 0,
                   "type": "integer",
                   "minimum": 0,
-                  "default": 0
+                  "maximum": 9007199254740991
                 },
                 "warnings": {
+                  "default": 0,
                   "type": "integer",
                   "minimum": 0,
-                  "default": 0
+                  "maximum": 9007199254740991
                 },
                 "errors": {
+                  "default": 0,
                   "type": "integer",
                   "minimum": 0,
-                  "default": 0
+                  "maximum": 9007199254740991
                 },
                 "lastSubmitted": {
                   "type": "string"
@@ -1117,25 +1110,22 @@
               },
               "required": [
                 "path"
-              ],
-              "additionalProperties": false
-            },
-            "default": [],
-            "description": "Previous snapshot entries from this tool's snapshot output."
+              ]
+            }
           },
           "includeUnchanged": {
-            "type": "boolean",
+            "description": "Include entries with no observed change in the comparison.",
             "default": false,
-            "description": "Include entries with no observed change in the comparison."
+            "type": "boolean"
           },
           "minAbsIndexedDelta": {
+            "description": "Minimum absolute indexed URL delta to include otherwise unchanged sitemaps.",
+            "default": 1,
             "type": "integer",
             "minimum": 0,
-            "default": 1,
-            "description": "Minimum absolute indexed URL delta to include otherwise unchanged sitemaps."
+            "maximum": 9007199254740991
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1146,7 +1136,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1171,8 +1161,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1192,10 +1182,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -1204,11 +1196,11 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -1219,11 +1211,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "currentDateRange": {
+            "description": "Current period. Defaults to datePreset.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -1238,40 +1229,55 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Current period. Defaults to datePreset."
+            ]
           },
           "previousDateRange": {
-            "$ref": "#/properties/currentDateRange",
-            "description": "Previous period. Defaults to the immediately preceding period with the same length."
+            "description": "Previous period. Defaults to the immediately preceding period with the same length.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
           },
           "includePages": {
-            "type": "boolean",
+            "description": "When true, groups by searchAppearance + page for page-level rich result trends.",
             "default": false,
-            "description": "When true, groups by searchAppearance + page for page-level rich result trends."
+            "type": "boolean"
           },
           "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 5000,
-            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results."
+            "maximum": 25000
           },
           "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 50,
             "type": "integer",
             "minimum": 1,
-            "maximum": 100,
-            "default": 50,
-            "description": "Maximum number of highest-ranked results to return."
+            "maximum": 100
           },
           "minImpressions": {
+            "description": "Minimum reported impressions required for a row to enter the analysis.",
+            "default": 0,
             "type": "integer",
             "minimum": 0,
-            "default": 0,
-            "description": "Minimum reported impressions required for a row to enter the analysis."
+            "maximum": 9007199254740991
           },
           "sortBy": {
+            "description": "Metric or dimension used to rank the returned results.",
+            "default": "impressionsDelta",
             "type": "string",
             "enum": [
               "currentClicks",
@@ -1279,12 +1285,9 @@
               "clicksDelta",
               "impressionsDelta",
               "positionDelta"
-            ],
-            "default": "impressionsDelta",
-            "description": "Metric or dimension used to rank the returned results."
+            ]
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1295,7 +1298,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1320,8 +1323,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1341,10 +1344,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -1353,11 +1358,11 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -1368,11 +1373,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -1387,11 +1391,19 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           },
           "objectives": {
+            "description": "Analysis goals that determine the recommended large-site sampling strategy.",
+            "default": [
+              "topTraffic",
+              "lowCtr",
+              "declining",
+              "sitemapRisk",
+              "staleSitemaps"
+            ],
+            "minItems": 1,
+            "maxItems": 5,
             "type": "array",
             "items": {
               "type": "string",
@@ -1402,47 +1414,37 @@
                 "sitemapRisk",
                 "staleSitemaps"
               ]
-            },
-            "minItems": 1,
-            "maxItems": 5,
-            "default": [
-              "topTraffic",
-              "lowCtr",
-              "declining",
-              "sitemapRisk",
-              "staleSitemaps"
-            ],
-            "description": "Analysis goals that determine the recommended large-site sampling strategy."
+            }
           },
           "pageLimit": {
+            "description": "Maximum number of pages considered for the sampling plan.",
+            "default": 5000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 5000,
-            "description": "Maximum number of pages considered for the sampling plan."
+            "maximum": 25000
           },
           "maxInspectionUrls": {
+            "description": "Maximum URL Inspection candidates included in the plan; inspection calls consume provider quota.",
+            "default": 10,
             "type": "integer",
             "minimum": 1,
-            "maximum": 10,
-            "default": 10,
-            "description": "Maximum URL Inspection candidates included in the plan; inspection calls consume provider quota."
+            "maximum": 10
           },
           "minImpressionsForLowCtr": {
+            "description": "Minimum impressions before a page is considered for low-CTR analysis.",
+            "default": 100,
             "type": "integer",
             "minimum": 1,
-            "default": 100,
-            "description": "Minimum impressions before a page is considered for low-CTR analysis."
+            "maximum": 9007199254740991
           },
           "staleSitemapDays": {
+            "description": "Number of days after which a sitemap's last download is considered stale.",
+            "default": 14,
             "type": "integer",
             "minimum": 1,
-            "maximum": 180,
-            "default": 14,
-            "description": "Number of days after which a sitemap's last download is considered stale."
+            "maximum": 180
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1453,7 +1455,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1478,8 +1480,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1499,10 +1501,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "urls": {
+            "minItems": 1,
+            "maxItems": 10,
             "type": "array",
             "items": {
               "type": "object",
@@ -1515,23 +1519,24 @@
                   "type": "string"
                 },
                 "priority": {
+                  "default": "medium",
                   "type": "string",
                   "enum": [
                     "low",
                     "medium",
                     "high",
                     "critical"
-                  ],
-                  "default": "medium"
+                  ]
                 },
                 "tags": {
+                  "default": [],
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "default": []
+                  }
                 },
                 "expectedVerdict": {
+                  "default": "PASS",
                   "type": "string",
                   "enum": [
                     "PASS",
@@ -1539,8 +1544,7 @@
                     "FAIL",
                     "NEUTRAL",
                     "VERDICT_UNSPECIFIED"
-                  ],
-                  "default": "PASS"
+                  ]
                 },
                 "expectedCanonical": {
                   "type": "string",
@@ -1552,27 +1556,23 @@
               },
               "required": [
                 "url"
-              ],
-              "additionalProperties": false
+              ]
             },
-            "minItems": 1,
-            "maxItems": 10,
             "description": "Watchlist entries. Maximum 10 per call to protect URL Inspection quota."
           },
           "languageCode": {
-            "type": "string",
-            "description": "Optional IETF language tag, e.g. en-US or fr-FR."
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
           },
           "continueOnError": {
-            "type": "boolean",
+            "description": "Continue with other URLs when one inspection fails, returning individual failures.",
             "default": true,
-            "description": "Continue with other URLs when one inspection fails, returning individual failures."
+            "type": "boolean"
           }
         },
         "required": [
           "urls"
         ],
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1583,7 +1583,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1608,8 +1608,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1629,19 +1629,21 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "dimension": {
+            "description": "Reporting dimension used to group and compare results.",
+            "default": "query",
             "type": "string",
             "enum": [
               "query",
               "page"
-            ],
-            "default": "query",
-            "description": "Reporting dimension used to group and compare results."
+            ]
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -1650,11 +1652,11 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -1665,11 +1667,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "currentDateRange": {
+            "description": "Current period. Defaults to datePreset.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -1684,47 +1685,58 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Current period. Defaults to datePreset."
+            ]
           },
           "previousDateRange": {
-            "$ref": "#/properties/currentDateRange",
-            "description": "Previous period. Defaults to the immediately preceding period with the same length."
+            "description": "Previous period. Defaults to the immediately preceding period with the same length.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
           },
           "limit": {
+            "description": "Rows to fetch for each period.",
+            "default": 5000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 5000,
-            "description": "Rows to fetch for each period."
+            "maximum": 25000
           },
           "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 25,
             "type": "integer",
             "minimum": 1,
-            "maximum": 100,
-            "default": 25,
-            "description": "Maximum number of highest-ranked results to return."
+            "maximum": 100
           },
           "minAbsClickDelta": {
-            "type": "number",
-            "minimum": 0,
+            "description": "Filter out rows with smaller absolute click delta.",
             "default": 0,
-            "description": "Filter out rows with smaller absolute click delta."
+            "type": "number",
+            "minimum": 0
           },
           "sortBy": {
+            "description": "Metric or dimension used to rank the returned results.",
+            "default": "clicksDelta",
             "type": "string",
             "enum": [
               "clicksDelta",
               "impressionsDelta",
               "ctrDelta",
               "positionDelta"
-            ],
-            "default": "clicksDelta",
-            "description": "Metric or dimension used to rank the returned results."
+            ]
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1735,7 +1747,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1760,8 +1772,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1781,10 +1793,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -1793,11 +1807,11 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -1808,11 +1822,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -1827,51 +1840,51 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           },
           "brandTerms": {
+            "description": "Optional brand terms. Defaults to terms derived from the property domain.",
+            "default": [],
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "default": [],
-            "description": "Optional brand terms. Defaults to terms derived from the property domain."
+            }
           },
           "categoryRules": {
+            "description": "Optional map of category name to matching tokens/phrases.",
             "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "description": "Optional map of category name to matching tokens/phrases."
+            }
           },
           "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 5000,
-            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results."
+            "maximum": 25000
           },
           "maxClusters": {
+            "description": "Maximum query clusters to return.",
+            "default": 25,
             "type": "integer",
             "minimum": 1,
-            "maximum": 100,
-            "default": 25,
-            "description": "Maximum query clusters to return."
+            "maximum": 100
           },
           "topQueriesPerCluster": {
+            "description": "Maximum example queries returned for each cluster.",
+            "default": 10,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25,
-            "default": 10,
-            "description": "Maximum example queries returned for each cluster."
+            "maximum": 25
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -1882,7 +1895,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -1907,8 +1920,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -1928,10 +1941,12 @@
         "type": "object",
         "properties": {
           "siteUrl": {
-            "type": "string",
-            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted."
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -1940,11 +1955,11 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
             "type": "string",
             "enum": [
               "today",
@@ -1955,11 +1970,10 @@
               "last6months",
               "last12months",
               "last16months"
-            ],
-            "default": "last28days",
-            "description": "Named reporting period. Use the custom date range when you need exact start and end dates."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -1974,46 +1988,44 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           },
           "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
             "type": "integer",
             "minimum": 1,
-            "maximum": 25000,
-            "default": 5000,
-            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results."
+            "maximum": 25000
           },
           "minPages": {
+            "description": "Minimum distinct pages ranking for a query before it is considered a cannibalization candidate.",
+            "default": 2,
             "type": "integer",
             "minimum": 2,
-            "maximum": 10,
-            "default": 2,
-            "description": "Minimum distinct pages ranking for a query before it is considered a cannibalization candidate."
+            "maximum": 10
           },
           "minImpressions": {
+            "description": "Minimum reported impressions required for a row to enter the analysis.",
+            "default": 100,
             "type": "integer",
             "minimum": 0,
-            "default": 100,
-            "description": "Minimum reported impressions required for a row to enter the analysis."
+            "maximum": 9007199254740991
           },
           "maxTopPageClickShare": {
+            "description": "Only flag queries where the top page owns less than or equal to this click share.",
+            "default": 0.8,
             "type": "number",
             "minimum": 0.1,
-            "maximum": 0.99,
-            "default": 0.8,
-            "description": "Only flag queries where the top page owns less than or equal to this click share."
+            "maximum": 0.99
           },
           "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 25,
             "type": "integer",
             "minimum": 1,
-            "maximum": 100,
-            "default": 25,
-            "description": "Maximum number of highest-ranked results to return."
+            "maximum": 100
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -2024,7 +2036,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -2049,8 +2061,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,
@@ -2070,13 +2082,15 @@
         "type": "object",
         "properties": {
           "dimensions": {
+            "description": "Dimensions to validate.",
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Dimensions to validate."
+            }
           },
           "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
             "type": "string",
             "enum": [
               "web",
@@ -2085,11 +2099,10 @@
               "news",
               "discover",
               "googleNews"
-            ],
-            "default": "web",
-            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property."
+            ]
           },
           "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
             "type": "object",
             "properties": {
               "startDate": {
@@ -2102,12 +2115,9 @@
             "required": [
               "startDate",
               "endDate"
-            ],
-            "additionalProperties": false,
-            "description": "Explicit reporting start and end dates in YYYY-MM-DD format."
+            ]
           }
         },
-        "additionalProperties": false,
         "$schema": "http://json-schema.org/draft-07/schema#"
       },
       "outputSchema": {
@@ -2118,7 +2128,7 @@
               {
                 "type": "object",
                 "properties": {},
-                "additionalProperties": true
+                "additionalProperties": {}
               },
               {
                 "type": "array",
@@ -2143,8 +2153,8 @@
         "required": [
           "result"
         ],
-        "additionalProperties": false,
-        "$schema": "http://json-schema.org/draft-07/schema#"
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
       },
       "annotations": {
         "readOnlyHint": true,

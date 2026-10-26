@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "google-search-console-mcp-server",
   "display_name": "Google Search Console by getmcpads",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Google Search Console MCP server: 20 read tools, no write tools.",
   "author": {
     "name": "getmcpads",
