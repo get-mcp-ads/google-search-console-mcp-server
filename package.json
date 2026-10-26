@@ -1,6 +1,6 @@
 {
   "name": "@getmcpads/google-search-console-mcp-server",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "mcpName": "com.getmcpads/google-search-console",
   "description": "Google Search Console MCP server: 20 read tools, no write tools.",
   "license": "Apache-2.0",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
-    "zod": "^3.24.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

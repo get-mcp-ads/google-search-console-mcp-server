@@ -15,7 +15,7 @@ const configSchema = z.object({
   defaultSiteUrl: z.string().optional(),
   /** Search Console properties every tool is limited to. Undefined: every property the credentials reach. */
   allowedSiteUrls: z.array(z.string()).optional(),
-  logLevel: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  logLevel: z.enum(["debug", "info", "warn", "error"]).prefault("info"),
 });
 
 export type GSCConfig = z.infer<typeof configSchema>;

@@ -11,7 +11,7 @@ import { logger } from "./core/logger.js";
 import { assertSiteAllowed } from "./core/account-scope.js";
 import { formatMcpToolError } from "./core/errors.js";
 
-export const PACKAGE_VERSION = "2.1.0";
+export const PACKAGE_VERSION = "2.1.1";
 
 /**
  * Refuse a `siteUrl` outside GSC_SITE_URLS before the tool runs. A tool called

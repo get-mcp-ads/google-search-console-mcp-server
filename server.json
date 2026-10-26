@@ -3,7 +3,7 @@
   "name": "com.getmcpads/google-search-console",
   "title": "Google Search Console",
   "description": "Google Search Console MCP server: 20 read tools, no write tools.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "websiteUrl": "https://www.getmcpads.com/tools/search-console",
   "repository": {
     "url": "https://github.com/get-mcp-ads/google-search-console-mcp-server",
@@ -14,7 +14,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@getmcpads/google-search-console-mcp-server",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "transport": {
         "type": "stdio"
       },
