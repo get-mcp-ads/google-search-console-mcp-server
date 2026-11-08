@@ -1,0 +1,2201 @@
+{
+  "serverInfo": {
+    "name": "@getmcpads/google-search-console-mcp-server",
+    "title": "Google Search Console MCP server: 20 read tools, no write tools.",
+    "version": "2.1.2",
+    "websiteUrl": "https://www.getmcpads.com/tools/search-console",
+    "icons": [
+      {
+        "src": "https://mcp.getmcpads.com/icon.svg",
+        "mimeType": "image/svg+xml"
+      }
+    ]
+  },
+  "tools": [
+    {
+      "name": "gsc_list_sites",
+      "title": "gsc list sites",
+      "description": "List all Google Search Console properties accessible with the current credentials.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_get_site",
+      "title": "gsc get site",
+      "description": "Get one Search Console property and its exact permission level (read-only sites.get).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_health_check",
+      "title": "gsc health check",
+      "description": "Verify Google Search Console read-only authentication, visible properties, configured default site, and permission levels without exposing tokens.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_query_search_analytics",
+      "title": "gsc query search analytics",
+      "description": "Query Google Search Console Search Analytics. Returns clicks, impressions, CTR, and average position for queries, pages, countries, devices, dates, and search appearances.\nUse gsc://metrics, gsc://dimensions, gsc://filters, and gsc://compatibility for available fields and rules.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "metrics": {
+            "description": "Native: clicks, impressions, ctr, position. Calculated: ctrOpportunity, clicksPerImpression, impressionShare, clickShare.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dimensions": {
+            "description": "Up to 5 dimensions selected from query, page, country, device, date, hour, searchAppearance.",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "description": "Filters combined according to this tool's query schema. Use provider field names and the declared operators.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "operator": {
+                  "type": "string",
+                  "enum": [
+                    "contains",
+                    "equals",
+                    "notContains",
+                    "notEquals",
+                    "includingRegex",
+                    "excludingRegex"
+                  ]
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "required": [
+                "field",
+                "operator",
+                "value"
+              ]
+            }
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "dataState": {
+            "description": "final=stable data, all=fresh daily data, hourly_all=fresh hourly data (use hour dimension).",
+            "default": "all",
+            "type": "string",
+            "enum": [
+              "final",
+              "all",
+              "hourly_all"
+            ]
+          },
+          "aggregationType": {
+            "description": "Official GSC aggregation. byProperty is incompatible with page grouping/filtering and Discover/Google News. byNewsShowcasePanel requires discover/googleNews plus searchAppearance equals NEWS_SHOWCASE, and forbids page grouping/filtering or another searchAppearance filter.",
+            "default": "auto",
+            "type": "string",
+            "enum": [
+              "auto",
+              "byPage",
+              "byProperty",
+              "byNewsShowcasePanel"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "orderBy": {
+            "description": "Field used to order report rows.",
+            "default": "clicks",
+            "type": "string",
+            "enum": [
+              "clicks",
+              "impressions",
+              "ctr",
+              "position",
+              "ctrOpportunity",
+              "clicksPerImpression",
+              "impressionShare",
+              "clickShare"
+            ]
+          },
+          "orderDirection": {
+            "description": "Sort direction for the selected ordering field.",
+            "default": "DESC",
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 1000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "startRow": {
+            "description": "Optional 0-based row offset for explicit pagination.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "autoPaginate": {
+            "description": "When true, omit rowLimit so the GSC client auto-paginates until exhaustion.",
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_inspect_url",
+      "title": "gsc inspect url",
+      "description": "Inspect a URL for Google indexing status, crawl info, mobile usability, AMP, and rich results. Quota: 2000 requests/day/property.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL to inspect."
+          },
+          "languageCode": {
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_bulk_inspect_urls",
+      "title": "gsc bulk inspect urls",
+      "description": "Inspect multiple URLs with a conservative sequential limit and normalized URL Inspection results. Quota: 2000 requests/day/property.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "urls": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Full URLs to inspect. Maximum 10 per call to protect URL Inspection quota."
+          },
+          "languageCode": {
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
+          },
+          "continueOnError": {
+            "description": "When true, returns per-URL errors instead of failing the entire batch.",
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "urls"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_list_sitemaps",
+      "title": "gsc list sitemaps",
+      "description": "List sitemaps submitted for a Search Console property, including processing status and submitted/indexed counts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "sitemapIndex": {
+            "description": "Optional sitemap index URL used to return only its child sitemaps.",
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_get_sitemap",
+      "title": "gsc get sitemap",
+      "description": "Get one submitted sitemap by full feed path, including type, fetch state, warnings/errors, and submitted/indexed content totals.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "feedpath": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full sitemap URL exactly as submitted to Search Console."
+          }
+        },
+        "required": [
+          "feedpath"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_get_sitemap_health",
+      "title": "gsc get sitemap health",
+      "description": "Return an enriched read-only sitemap health summary with status totals, submitted/indexed content counts, warnings, and errors.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_compare_search_types",
+      "title": "gsc compare search types",
+      "description": "Compare performance across Search Console search types: web, image, video, news, discover, and Google News.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchTypes": {
+            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces.",
+            "default": [
+              "web",
+              "image",
+              "video",
+              "discover"
+            ],
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "web",
+                "image",
+                "video",
+                "news",
+                "discover",
+                "googleNews"
+              ]
+            }
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDate": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_get_data_freshness",
+      "title": "gsc get data freshness",
+      "description": "Detect the most recent date with Search Analytics data by querying recent daily rows.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "lookbackDays": {
+            "description": "Recent days to scan for daily data. Max 30.",
+            "default": 14,
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 30
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_monitor_indexation_freshness",
+      "title": "gsc monitor indexation freshness",
+      "description": "Read-only monitoring snapshot for Search Analytics freshness, sitemap indexation totals, and an optional small URL Inspection sample.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchTypes": {
+            "description": "Search surfaces to compare. Each surface is queried separately; do not sum overlapping surfaces.",
+            "default": [
+              "web"
+            ],
+            "minItems": 1,
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "web",
+                "image",
+                "video",
+                "news",
+                "discover",
+                "googleNews"
+              ]
+            }
+          },
+          "lookbackDays": {
+            "description": "Recent days to scan for Search Analytics freshness.",
+            "default": 14,
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 30
+          },
+          "freshnessLagWarningDays": {
+            "description": "Maximum acceptable lag in days before freshness is marked delayed/stale.",
+            "default": 3,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 14
+          },
+          "inspectUrls": {
+            "description": "Optional URLs to inspect. Maximum 10 to protect URL Inspection quota.",
+            "default": [],
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "languageCode": {
+            "description": "Optional IETF language tag for URL Inspection, e.g. en-US or fr-FR.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_track_sitemap_deltas",
+      "title": "gsc track sitemap deltas",
+      "description": "Read-only sitemap delta tracker. Fetches the current sitemap snapshot and compares it to an agent-provided baseline; no state is written.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "baseline": {
+            "description": "Previous snapshot entries from this tool's snapshot output.",
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Sitemap URL/path returned by GSC."
+                },
+                "submitted": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "indexed": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "warnings": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "errors": {
+                  "default": 0,
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "lastSubmitted": {
+                  "type": "string"
+                },
+                "lastDownloaded": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          "includeUnchanged": {
+            "description": "Include entries with no observed change in the comparison.",
+            "default": false,
+            "type": "boolean"
+          },
+          "minAbsIndexedDelta": {
+            "description": "Minimum absolute indexed URL delta to include otherwise unchanged sitemaps.",
+            "default": 1,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_analyze_search_appearance_trends",
+      "title": "gsc analyze search appearance trends",
+      "description": "Analyze structured data and rich-result trend signals via the Search Analytics searchAppearance dimension when GSC exposes it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "currentDateRange": {
+            "description": "Current period. Defaults to datePreset.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "previousDateRange": {
+            "description": "Previous period. Defaults to the immediately preceding period with the same length.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "includePages": {
+            "description": "When true, groups by searchAppearance + page for page-level rich result trends.",
+            "default": false,
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 50,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "minImpressions": {
+            "description": "Minimum reported impressions required for a row to enter the analysis.",
+            "default": 0,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "sortBy": {
+            "description": "Metric or dimension used to rank the returned results.",
+            "default": "impressionsDelta",
+            "type": "string",
+            "enum": [
+              "currentClicks",
+              "currentImpressions",
+              "clicksDelta",
+              "impressionsDelta",
+              "positionDelta"
+            ]
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_plan_large_site_sampling",
+      "title": "gsc plan large site sampling",
+      "description": "Build a read-only URL Inspection sampling plan for large sites from sitemap risk signals and Search Analytics page performance.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "objectives": {
+            "description": "Analysis goals that determine the recommended large-site sampling strategy.",
+            "default": [
+              "topTraffic",
+              "lowCtr",
+              "declining",
+              "sitemapRisk",
+              "staleSitemaps"
+            ],
+            "minItems": 1,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "topTraffic",
+                "lowCtr",
+                "declining",
+                "sitemapRisk",
+                "staleSitemaps"
+              ]
+            }
+          },
+          "pageLimit": {
+            "description": "Maximum number of pages considered for the sampling plan.",
+            "default": 5000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "maxInspectionUrls": {
+            "description": "Maximum URL Inspection candidates included in the plan; inspection calls consume provider quota.",
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "minImpressionsForLowCtr": {
+            "description": "Minimum impressions before a page is considered for low-CTR analysis.",
+            "default": 100,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "staleSitemapDays": {
+            "description": "Number of days after which a sitemap's last download is considered stale.",
+            "default": 14,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 180
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_indexation_watchlist",
+      "title": "gsc indexation watchlist",
+      "description": "Read-only URL Inspection watchlist for critical URLs. Inspects up to 10 URLs and returns alert/review/ok assessments without storing state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "urls": {
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "priority": {
+                  "default": "medium",
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ]
+                },
+                "tags": {
+                  "default": [],
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "expectedVerdict": {
+                  "default": "PASS",
+                  "type": "string",
+                  "enum": [
+                    "PASS",
+                    "PARTIAL",
+                    "FAIL",
+                    "NEUTRAL",
+                    "VERDICT_UNSPECIFIED"
+                  ]
+                },
+                "expectedCanonical": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "expectedCoverageState": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            "description": "Watchlist entries. Maximum 10 per call to protect URL Inspection quota."
+          },
+          "languageCode": {
+            "description": "Optional IETF language tag, e.g. en-US or fr-FR.",
+            "type": "string"
+          },
+          "continueOnError": {
+            "description": "Continue with other URLs when one inspection fails, returning individual failures.",
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "urls"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_find_losses_gains",
+      "title": "gsc find losses gains",
+      "description": "Compare two periods for query or page performance and return click/impression/CTR/position deltas.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "dimension": {
+            "description": "Reporting dimension used to group and compare results.",
+            "default": "query",
+            "type": "string",
+            "enum": [
+              "query",
+              "page"
+            ]
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "currentDateRange": {
+            "description": "Current period. Defaults to datePreset.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "previousDateRange": {
+            "description": "Previous period. Defaults to the immediately preceding period with the same length.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "limit": {
+            "description": "Rows to fetch for each period.",
+            "default": 5000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 25,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "minAbsClickDelta": {
+            "description": "Filter out rows with smaller absolute click delta.",
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "sortBy": {
+            "description": "Metric or dimension used to rank the returned results.",
+            "default": "clicksDelta",
+            "type": "string",
+            "enum": [
+              "clicksDelta",
+              "impressionsDelta",
+              "ctrDelta",
+              "positionDelta"
+            ]
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_cluster_queries",
+      "title": "gsc cluster queries",
+      "description": "Cluster Search Console queries by simple tokens and intent signals: brand/non-brand, question, category, and topic tokens.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "brandTerms": {
+            "description": "Optional brand terms. Defaults to terms derived from the property domain.",
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categoryRules": {
+            "description": "Optional map of category name to matching tokens/phrases.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "maxClusters": {
+            "description": "Maximum query clusters to return.",
+            "default": 25,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "topQueriesPerCluster": {
+            "description": "Maximum example queries returned for each cluster.",
+            "default": 10,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_detect_cannibalization",
+      "title": "gsc detect cannibalization",
+      "description": "Detect queries where multiple pages compete for clicks/impressions in Search Analytics query-page rows.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "siteUrl": {
+            "description": "Search Console property URL, e.g. https://example.com/ or sc-domain:example.com. Uses GSC_SITE_URL when omitted.",
+            "type": "string"
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "datePreset": {
+            "description": "Named reporting period. Use the custom date range when you need exact start and end dates.",
+            "default": "last28days",
+            "type": "string",
+            "enum": [
+              "today",
+              "yesterday",
+              "last7days",
+              "last28days",
+              "last3months",
+              "last6months",
+              "last12months",
+              "last16months"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "description": "Start date YYYY-MM-DD"
+              },
+              "endDate": {
+                "type": "string",
+                "description": "End date YYYY-MM-DD"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          },
+          "limit": {
+            "description": "Maximum number of returned items or rows. The declared bounds and default apply; use pagination for additional results.",
+            "default": 5000,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25000
+          },
+          "minPages": {
+            "description": "Minimum distinct pages ranking for a query before it is considered a cannibalization candidate.",
+            "default": 2,
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 10
+          },
+          "minImpressions": {
+            "description": "Minimum reported impressions required for a row to enter the analysis.",
+            "default": 100,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "maxTopPageClickShare": {
+            "description": "Only flag queries where the top page owns less than or equal to this click share.",
+            "default": 0.8,
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 0.99
+          },
+          "topN": {
+            "description": "Maximum number of highest-ranked results to return.",
+            "default": 25,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "gsc_validate_query",
+      "title": "gsc validate query",
+      "description": "Validate a Search Console metric/dimension/search type combination before executing it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dimensions": {
+            "description": "Dimensions to validate.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "searchType": {
+            "description": "Search surface to report, such as web, image, video, news or Discover. Availability depends on the property.",
+            "default": "web",
+            "type": "string",
+            "enum": [
+              "web",
+              "image",
+              "video",
+              "news",
+              "discover",
+              "googleNews"
+            ]
+          },
+          "dateRange": {
+            "description": "Explicit reporting start and end dates in YYYY-MM-DD format.",
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string"
+              },
+              "endDate": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "startDate",
+              "endDate"
+            ]
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Original tool result: parsed JSON when the text is JSON, otherwise the text or multiple MCP content blocks. Provider fields depend on the selected query."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "gsc-manifest",
+      "uri": "gsc://manifest"
+    },
+    {
+      "name": "gsc-recipes",
+      "uri": "gsc://recipes"
+    },
+    {
+      "name": "gsc-metrics",
+      "uri": "gsc://metrics"
+    },
+    {
+      "name": "gsc-dimensions",
+      "uri": "gsc://dimensions"
+    },
+    {
+      "name": "gsc-filters",
+      "uri": "gsc://filters"
+    },
+    {
+      "name": "gsc-compatibility",
+      "uri": "gsc://compatibility"
+    },
+    {
+      "name": "gsc-p2-readonly-playbooks",
+      "uri": "gsc://p2-readonly-playbooks"
+    }
+  ],
+  "prompts": []
+}
